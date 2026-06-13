@@ -18,3 +18,4 @@ echo "Pulling $branch …"
 git pull --ff-only origin "$branch"
 
 echo "Done. Current commit: $(git rev-parse --short HEAD)"
+echo "Note: voicekit venv at /opt/voicedevice/voicekit_v2/venv is unchanged."

@@ -1,12 +1,7 @@
-# Install inside lessons/venv on the Raspberry Pi:
-#   python3 -m venv venv
-#   ./venv/bin/pip install -r requirements.txt
+# Lessons use the kit Python at /opt/voicedevice/voicekit_v2/venv
+# (RPi.GPIO, groq, python-dotenv, numpy, tflite-runtime, … — see voicekit_v2/full_requirement.txt).
 #
-# tflite-runtime wheels are Pi/ARM-specific; run pip on the device, not a laptop.
+# Image build — install only extras not already in voicekit venv:
+#   ./image_setup_venv.sh
 
-RPi.GPIO>=0.7.0
-groq>=0.37.0
-python-dotenv>=1.0.0
-numpy>=1.23.0
-tflite-runtime>=2.14.0
 sounddevice>=0.4.6

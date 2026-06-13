@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
-# Run a lesson challenge.py inside lessons/venv, pausing captiveportal.service.
+# Run a lesson with the kit Python venv, pausing captiveportal.service.
+#
+# Python: /opt/voicedevice/voicekit_v2/venv (same as voicekit_v2 on the Pi).
 #
 # Usage (from the lessons folder):
-#   ./run lesson_1
+#   ./run 1
 #   ./run lesson_6
 #   ./run 8
-#   (Uses run.py when present, else challenge.py. Also lesson01_* folders.)
 #
 # Ctrl+C stops the lesson and restarts captiveportal.service (if it was running).
 
 set -euo pipefail
 
 LESSONS_DIR="$(cd "$(dirname "$0")" && pwd)"
+KIT_VENV_DEFAULT="/opt/voicedevice/voicekit_v2/venv"
 CAPTIVE_SERVICE="${CAPTIVE_SERVICE:-captiveportal.service}"
 CAPTIVE_WAS_RUNNING=0
 LESSON_EXIT=0
@@ -28,10 +30,11 @@ Examples:
 
 The script:
   1. Stops captiveportal.service (Wi-Fi setup portal) if it is running
-  2. Runs run.py (or challenge.py) with lessons/venv/bin/python
+  2. Runs run.py (or challenge.py) with the kit venv Python
+     (/opt/voicedevice/voicekit_v2/venv)
   3. On exit or Ctrl+C, starts captiveportal.service again
 
-Your Python packages live in the folder  venv/  (not this script).
+Python comes from voicekit_v2/venv on the Pi (pre-installed; do not recreate).
 EOF
     exit 1
 }
@@ -78,7 +81,25 @@ trap on_exit EXIT INT TERM
 
 find_venv_python() {
     local d py
-    for d in "$LESSONS_DIR/venv" "$LESSONS_DIR/.venv"; do
+    local -a candidates=()
+
+    if [[ -n "${LESSONS_PYTHON:-}" && -x "${LESSONS_PYTHON}" ]]; then
+        echo "${LESSONS_PYTHON}"
+        return 0
+    fi
+
+    if [[ -n "${LESSONS_VENV:-}" ]]; then
+        candidates+=("${LESSONS_VENV}")
+    fi
+
+    candidates+=(
+        "${KIT_VENV_DEFAULT}"
+        "${HOME}/Voicedevice/voicekit_v2/venv"
+        "${LESSONS_DIR}/venv"
+        "${LESSONS_DIR}/.venv"
+    )
+
+    for d in "${candidates[@]}"; do
         for py in "$d/bin/python3" "$d/bin/python"; do
             if [[ -x "$py" ]]; then
                 echo "$py"
@@ -233,8 +254,9 @@ main() {
 
     local py target lesson_dir
     py="$(find_venv_python)" || {
-        echo "Error: no Python in lessons/venv or lessons/.venv" >&2
-        echo "Create it:  python3 -m venv venv && ./venv/bin/pip install -r lessonNN/requirements.txt" >&2
+        echo "Error: no Python venv found for lessons." >&2
+        echo "  Expected on the kit: ${KIT_VENV_DEFAULT}/bin/python3" >&2
+        echo "  Override with: LESSONS_VENV=/path/to/venv  or  LESSONS_PYTHON=/path/to/python3" >&2
         exit 1
     }
 

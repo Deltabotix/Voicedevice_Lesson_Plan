@@ -47,7 +47,7 @@ From `~/lessons`:
 ./run N
 ```
 
-Uses `venv` and each lesson’s `run.py`.
+Uses the kit Python at **`/opt/voicedevice/voicekit_v2/venv`** (same venv as voicekit_v2). Each lesson’s `run.py` is executed with that interpreter.
 
 ## Reset (Git only)
 

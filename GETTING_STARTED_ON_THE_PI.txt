@@ -20,7 +20,9 @@ Check you are in the right place:
 
   ls
 
-You should see folders like  lesson_1 ,  lesson_2 , …  lesson_10 ,  run  (or  run.sh ),  venv .
+You should see folders like  lesson_01_red_led ,  run  (or  run.sh ), and shared
+files ( groq_env.py ,  tm_audio_runtime.py ). Python packages are NOT in this
+folder — they live in  /opt/voicedevice/voicekit_v2/venv  (same as voicekit).
 
 Shared files (same folder as  lesson_1 , not inside each lesson):
   groq_env.py           — lessons 6 and 7 (load your Groq API key from .env)
@@ -32,25 +34,33 @@ If lesson 6 says  No module named groq_env , copy  groq_env.py  into  ~/lessons 
 
 Running a lesson (recommended)
 ------------------------------
-Lessons use a shared Python environment in the  venv  folder.
+Lessons use the kit Python at  /opt/voicedevice/voicekit_v2/venv  — the same
+environment as voicekit_v2. You do not create venv or run pip install.
+
 Use the  run  script — it stops the Wi-Fi captive portal while you work,
 then turns the portal back on when you finish.
 
   cd ~/lessons
-  ./run lesson_1
-  ./run.sh lesson_1          # same as ./run
+  ./run 1
+  ./run.sh 1                 # same as ./run
 
 Shortcuts:
 
-  ./run 6                  → lesson_6/challenge.py
-  ./run lesson_6           → same
+  ./run 6                  → lesson 6
+  ./run lesson_06_led_prompt
   ./run lesson_10/challenge.py
 
 When the lesson is running, press  Ctrl+C  to stop. The captive portal
 service starts again automatically.
 
-Note:  venv  is the Python environment folder. The launcher is  ./run  (a
-separate file), not  ./venv  by itself.
+
+Getting new lessons (Git)
+-------------------------
+Lesson code updates from GitHub. The voicekit venv is unchanged.
+
+  cd ~/lessons
+  ./update.sh
+  # or: git pull
 
 
 Why ./run stops the captive portal
@@ -114,22 +124,11 @@ Then run the lesson with  ./run 6  or  ./run 7
 
 Reset a lesson (Git)
 --------------------
-If you cloned the lessons repo from GitHub:
-
   cd ~/lessons
-  ./reset_lesson.sh 1              # one lesson (my_program.py)
-  ./reset_lesson.sh --all          # all tracked files
+  ./reset.sh 1                 # one lesson (my_program.py)
+  ./reset.sh --all               # all tracked files
 
 Or:  git checkout -- lesson_01_red_led/my_program.py
-
-
-Install packages into lessons/venv (first time or new lesson)
--------------------------------------------------------------
-  cd ~/lessons
-  python3 -m venv venv
-  ./venv/bin/pip install -r lesson06_led_prompt/requirements.txt
-
-Repeat  pip install -r ...  when a lesson README lists new packages.
 
 
 If ./run says permission denied

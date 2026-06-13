@@ -2,14 +2,25 @@
 
 Hands-on coding lessons for the Voice Device kit (Raspberry Pi). Students edit **`my_program.py`** in each lesson folder; kit code lives in **`helper.py`**.
 
-## Quick start (on the Pi)
+## On the kit (normal use)
+
+Lessons run with the **same Python venv as voicekit** — already on the Pi:
+
+`/opt/voicedevice/voicekit_v2/venv`
+
+You do **not** create a separate venv or run `pip install`.
 
 ```bash
-git clone https://github.com/Deltabotix/Voicedevice_Lesson_Plan.git ~/lessons
 cd ~/lessons
-chmod +x run run.sh reset.sh reset_lesson.sh update.sh setup_venv.sh
-./setup_venv.sh
 ./run 1
+```
+
+Get new lesson **code** from GitHub (the venv stays on the Pi — it is not in this repo):
+
+```bash
+cd ~/lessons
+./update.sh
+# or: git pull
 ```
 
 See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full details.
@@ -18,7 +29,7 @@ See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full 
 
 | Script | Purpose |
 |--------|---------|
-| `./run N` or `./run.sh N` | Run lesson N (uses `venv`, pauses Wi‑Fi captive portal) |
+| `./run N` or `./run.sh N` | Run lesson N (voicekit venv, pauses Wi‑Fi captive portal) |
 | `./reset.sh N` | Restore `my_program.py` for lesson N from Git |
 | `./reset.sh --all` | Restore all tracked files |
 | `./update.sh` | `git pull` latest lessons |
@@ -31,8 +42,10 @@ Legacy folders (`lesson01_led_basics`, …) still use `challenge.py` / `starter.
 
 ## Groq (lessons 6–7)
 
+Uses **`groq`** and **`python-dotenv`** from the voicekit venv. Set your key in `.env`:
+
 1. Create a key at [console.groq.com](https://console.groq.com)
-2. Copy `.env.example` → `.env` and set `GROQ_API_KEY=`
+2. Copy `.env.example` → `.env` (or use `/opt/voicedevice/.env` on the kit)
 
 ## Teachable Machine (lessons 8–10)
 
@@ -45,8 +58,12 @@ Export **TensorFlow Lite** + **`labels.txt`** into the lesson folder (not in thi
 
 ## Reset policy
 
-No local starter copies. Reset always comes from Git:
-
 ```bash
 ./reset.sh 1
 ```
+
+## Kit maintainers
+
+- **`requirements.txt`** — extra packages for lessons (e.g. `sounddevice` for 8–10) added into voicekit venv
+- **`image_setup_venv.sh`** — `pip install -r requirements.txt` into `/opt/voicedevice/voicekit_v2/venv`
+- Override venv path: `LESSONS_VENV=/path/to/venv ./run 1`
