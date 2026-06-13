@@ -1,0 +1,4 @@
+numpy>=1.23.0
+tflite-runtime>=2.14.0
+sounddevice>=0.4.6
+RPi.GPIO>=0.7.0

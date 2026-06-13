@@ -1,0 +1,57 @@
+Lesson 3 — IR sensor + red LED (Module 3)
+=========================================
+
+What this is (very short)
+-------------------------
+The **IR sensor** is an **input**: the Pi **reads** HIGH or LOW. The **red LED** is an **output**: the Pi **writes** HIGH or LOW. In a loop you **poll** (read over and over): when the rule says “obstacle,” light the LED (steady or blink); when “clear,” turn it off.
+
+
+What you must fill in
+---------------------
+1) **ON_STATE_KEYWORD** — `"HIGH"` or `"LOW"` so **LED on** matches wiring (same idea as Lesson 1).
+2) **IR_PIN** — BCM pin where the sensor **digital output** wire goes (your kit diagram).
+3) **IR_OBSTACLE_KEYWORD** — `"HIGH"` or `"LOW"`: which level means **something is in front** of the sensor. If the LED never reacts, **flip** this.
+4) **student_flow()** — set up LED and IR, then a **polling loop** (see comments in `challenge.py`).
+
+
+Every function in the challenge code
+--------------------------------------
+set_on_state / setup_led / led_on / led_off
+  Same as earlier lessons — only for the **red LED** on **LED_PIN** (fixed to **26** on this kit).
+
+set_ir_obstacle_level(keyword)
+  Sets whether **obstacle** means the IR pin reads **HIGH** or **LOW**.
+
+setup_ir_sensor(pin)
+  Configures **IR_PIN** as **input** with internal **pull-up** (common default; some modules may need different wiring).
+
+obstacle_present()
+  Returns **True** if the pin matches your obstacle rule, else **False**.
+
+wait_ms(ms)
+  Sleep between loop iterations (typical poll gap **30–100 ms**).
+
+safe_cleanup()
+  Tries **LED off**, then **GPIO.cleanup()**.
+
+run_with_guard / main
+  Errors + always cleanup.
+
+
+Hints (small)
+-------------
+• **Steady LED when blocked:** `if obstacle_present(): led_on()` else `led_off()` inside the loop.
+• **Blink when blocked:** inside `if obstacle_present():` do `led_on(); wait_ms(80); led_off();` then still `wait_ms(...)` so the loop is not too fast.
+• If readings **flicker**, slightly longer `wait_ms` in the loop helps; a future lesson can add debounce counters.
+• **LED_PIN** is **26** here so you only tune **IR_PIN** and the two **KEYWORD** strings.
+
+
+How to run
+----------
+  cd .../lesson03_ir_sensor_led
+  python3 challenge.py
+
+
+Success check
+-------------
+Waving a hand in front of the sensor changes the LED pattern you coded; LED ends **off** after cleanup.

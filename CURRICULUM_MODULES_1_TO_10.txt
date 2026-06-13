@@ -1,0 +1,112 @@
+Voicedevice Kit — Curriculum Overview (Modules 1–10)
+
+Short intro: this path is for students about 16 and up, on the Raspberry Pi Zero 2 W kit. The story goes from simple outputs to sound, then light use of AI prompts, then Teachable Machine voice projects.
+
+Kit in the box (for context): red LED, extra GPIO, 3.3 V buzzer, servo, IR sensor, MOSFET + 12 V LED strip + 12 V supply, microphone (INMP441), speaker with amp (MAX98357A).
+
+
+Module 1 - Lights and buzzer
+
+What will they do —
+Run a short guided script: turn the LED on and off on purpose, wait between steps, then drive the buzzer so it makes a small pattern of beeps (short and long), not one random blip.
+
+What will they learn —
+That a GPIO pin can be driven high or low; the LED shows that as light. The kit uses a passive buzzer, so beeps use PWM (a tone at a frequency) over time—not the same as holding one DC level. They learn that wiring can make LED “on” mean high or low depending on the board, and that cleaning up at the end is part of the job.
+
+
+Module 2 - MOSFET and servo
+
+What will they do —
+Move the servo through a few clear angles (for example left, middle, right) with short pauses. Change the 12 V strip brightness through a few steps or a simple fade, using the MOSFET path the lesson provides, and finish with the strip off.
+
+What will they learn —
+That the Pi does not feed 12 V directly to the strip—the MOSFET is the switch and the adapter supplies the power. That servos need time between commands. That “dimming” is often done with fast on/off (PWM), which our eyes read as softer light.
+
+
+Module 3 - IR sensor and LED
+
+What will they do —
+Read the IR sensor in a loop, pick a simple rule for “something is there” vs “clear,” and make the red LED turn on or blink when the rule says something is in front of the sensor.
+
+What will they learn —
+The difference between an input pin (sensor) and an output pin (LED). That real sensors can be a bit noisy and that room light and surfaces matter. That checking the sensor again and again (polling) is a normal way to watch the world.
+
+
+Module 4 - Speaker
+
+What will they do —
+Play a test sound file or tone through the kit speaker using the lesson’s playback path. If something is wrong, work through a short checklist (device, volume, wiring) until sound comes out reliably.
+
+What will they learn —
+That “sound out” has a chain—file, software, amp, speaker—and any link can fail. They get a baseline so later lessons are not fighting mystery silence.
+
+
+Module 5 - Microphone and speaker
+
+What will they do —
+Record a short clip from the microphone, maybe see that sound has a level, then play something back through the speaker (often a quiet clip or a fixed reply) so listen and talk both work on the same Pi.
+
+What will they learn —
+That audio is captured in chunks, that background noise and echo are normal in a classroom, and that mic and speaker together need care so the room does not squeal with feedback.
+
+
+Module 6 - LED via prompt engineering
+
+What will they do —
+Use short written or spoken lines (for example “could you turn on the led,” “switch the light off please”) through a small prompt + model step that is set up for them. They adjust the prompt text and test which phrases turn the LED on or off and which phrases should do nothing.
+
+What will they learn —
+That talking to an assistant is still engineering: you have to spell out what answers mean and what should happen next. Same words can be polite or blunt; edge cases prove the limits. The LED stays the sandbox so success is visible.
+
+
+Module 7 - Traffic cop
+
+What will they do —
+The kit reads a sentence and must answer with only one of two tags: CONTROL (user wants hardware to move) or GENERAL (normal talk or questions). Students try different instruction text for that step, then run a fixed list of sample lines (for example “turn the LED on” vs “what is two plus two”) and see how many sort correctly. Optional: blink the LED only when the answer is CONTROL, so the class can see the split.
+
+What will they learn —
+Not every sentence should go to motors and lights. This step is a simple gate: hardware first, or not hardware. The tag names must match what the program expects. If chat is wrongly tagged as CONTROL, silly or risky things can happen—so a small sorting step up front is worth it.
+
+
+Module 8 - Barnyard soundboard (Teachable Machine)
+
+What will they do —
+Record training clips for a few words (cat, dog, sheep, cow, etc.), train a Teachable Machine audio model, export it, and map each winning label to a sound file on the kit (meow, woof, and so on).
+
+What will they learn —
+That the model only knows classes they trained; labels are wired to actions by the student. Similar words and weak data create mix-ups; more and varied samples usually help. Optional: use a confidence cutoff so stray noise does not trigger the zoo.
+
+
+Teachable Machine for facilitators: https://teachablemachine.withgoogle.com/
+
+
+Module 9 - Secret clubhouse knock (Teachable Machine)
+
+What will they do —
+Train a few “password” sounds (words, whistles, knocks) plus a background class, export the model, and tie a match to friendly lights and chirps—and a mismatch to a gentler buzz or LED “no.”
+
+What will they learn —
+Same toolkit as Module 8, framed as access control: confidence thresholds, reducing double-fires with a simple cooldown, and explaining that matching training is not the same as “understanding English.”
+
+
+Module 10 - Voice beat sequencer (Teachable Machine)
+
+What will they do —
+The kit includes built-in samples of about one second each—drum, snare1, snare2, bass, hi-hat, and similar—so everyone starts from the same sound palette. Students train Teachable Machine with one class per hit name (they speak “drum,” “snare1,” etc., like the labels). They then speak a **sequence** in order—for example “drum, snare1, snare2, snare1.” The software recognizes each word, plays the matching sample in that order, and **loops the whole pattern** on the speaker until they stop (for example a button or a dedicated “stop” class). They can try other orders to build different loops.
+
+What will they learn —
+That voice can define a **repeating pattern**, not only a single action: order matters, the loop is the musical idea, and one misheard word breaks the groove—so clear class names and enough training clips still matter. They tie together the mic/speaker path (Module 5) and label-to-action mapping (Module 8) in something that feels like a tiny drum machine. Optional: flash the LED on each downbeat so the audience sees the loop as well as hears it.
+
+
+At a glance for sponsors
+
+Modules 1–3: core hardware (outputs, power path, first sensor story).
+Modules 4–5: audio path in and out.
+Modules 6–7: light AI literacy (LED + sorting speech).
+Modules 8–10: Teachable Machine on device (soundboard, password knock, voice beat loop).
+
+Lesson files on the kit stay fill-in-the-blank where possible: helpers provided, students supply the flow and key values. Pin maps and starters ship beside this file on the image.
+
+Lesson folder map (repo): lesson01_led_basics … lesson07_traffic_cop; lesson08_barnyard_tm; lesson09_clubhouse_knock; lesson10_voice_beat_sequencer. Shared TM helpers: lessons/tm_audio_runtime.py (used by lessons 8–10).
+
+On the Pi: shared Python env in lessons/venv/; run any challenge with  cd lessons && ./run lesson01_led_basics/challenge.py  (stops captiveportal.service, restarts it on Ctrl+C). See lessons/GETTING_STARTED_ON_THE_PI.txt for nano, ls, cd, and Ctrl+C.

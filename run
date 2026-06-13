@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+# Run a lesson challenge.py inside lessons/venv, pausing captiveportal.service.
+#
+# Usage (from the lessons folder):
+#   ./run lesson_1
+#   ./run lesson_6
+#   ./run 8
+#   (Uses run.py when present, else challenge.py. Also lesson01_* folders.)
+#
+# Ctrl+C stops the lesson and restarts captiveportal.service (if it was running).
+
+set -euo pipefail
+
+LESSONS_DIR="$(cd "$(dirname "$0")" && pwd)"
+CAPTIVE_SERVICE="${CAPTIVE_SERVICE:-captiveportal.service}"
+CAPTIVE_WAS_RUNNING=0
+LESSON_EXIT=0
+
+usage() {
+    cat <<'EOF'
+Usage: ./run <lesson-path>
+
+Examples:
+  ./run lesson_1
+  ./run lesson_6/challenge.py
+  ./run 8
+  ./run lesson_10
+
+The script:
+  1. Stops captiveportal.service (Wi-Fi setup portal) if it is running
+  2. Runs run.py (or challenge.py) with lessons/venv/bin/python
+  3. On exit or Ctrl+C, starts captiveportal.service again
+
+Your Python packages live in the folder  venv/  (not this script).
+EOF
+    exit 1
+}
+
+log() { echo "[run] $*"; }
+
+systemctl_sudo() {
+    # Kit images often allow passwordless sudo for systemctl; try without sudo first.
+    if systemctl "$@" 2>/dev/null; then
+        return 0
+    fi
+    sudo systemctl "$@"
+}
+
+captive_is_active() {
+    systemctl is-active --quiet "$CAPTIVE_SERVICE" 2>/dev/null && return 0
+    sudo systemctl is-active --quiet "$CAPTIVE_SERVICE" 2>/dev/null && return 0
+    return 1
+}
+
+stop_captive() {
+    if captive_is_active; then
+        log "Stopping $CAPTIVE_SERVICE …"
+        systemctl_sudo stop "$CAPTIVE_SERVICE"
+        CAPTIVE_WAS_RUNNING=1
+    else
+        log "$CAPTIVE_SERVICE was not running."
+    fi
+}
+
+start_captive() {
+    if [[ "$CAPTIVE_WAS_RUNNING" == 1 ]]; then
+        log "Starting $CAPTIVE_SERVICE …"
+        systemctl_sudo start "$CAPTIVE_SERVICE" || log "Warning: could not start $CAPTIVE_SERVICE"
+    fi
+}
+
+on_exit() {
+    start_captive
+    exit "${LESSON_EXIT:-0}"
+}
+
+trap on_exit EXIT INT TERM
+
+find_venv_python() {
+    local d py
+    for d in "$LESSONS_DIR/venv" "$LESSONS_DIR/.venv"; do
+        for py in "$d/bin/python3" "$d/bin/python"; do
+            if [[ -x "$py" ]]; then
+                echo "$py"
+                return 0
+            fi
+        done
+    done
+    return 1
+}
+
+find_lesson_dir_by_number() {
+    # n = lesson number as typed: 1, 6, 10 (not zero-padded)
+    local n="$1"
+    local hit
+
+    if [[ -d "$LESSONS_DIR/lesson_${n}" ]]; then
+        echo "lesson_${n}"
+        return 0
+    fi
+
+    local padded
+    padded="$(printf '%02d' "$n")"
+  # lesson_01_red_led, lesson_02_buzzer, …
+    hit="$(find "$LESSONS_DIR" -maxdepth 1 -type d -name "lesson_${padded}_*" 2>/dev/null | sort | head -n 1)"
+    if [[ -n "$hit" ]]; then
+        basename "$hit"
+        return 0
+    fi
+
+  # lesson01_led_basics, lesson06_led_prompt, …
+    hit="$(find "$LESSONS_DIR" -maxdepth 1 -type d -name "lesson${padded}_*" 2>/dev/null | sort | head -n 1)"
+    if [[ -n "$hit" ]]; then
+        basename "$hit"
+        return 0
+    fi
+
+    return 1
+}
+
+lesson_entry_script() {
+    local dir="$1"
+    if [[ -f "$dir/run.py" ]]; then
+        echo "run.py"
+        return 0
+    fi
+    if [[ -f "$dir/challenge.py" ]]; then
+        echo "challenge.py"
+        return 0
+    fi
+    return 1
+}
+
+resolve_lesson_path() {
+    local raw="$1"
+    local name suffix="" dir entry
+
+    raw="${raw#./}"
+
+  # ./run 1  →  lesson_01_red_led/run.py
+    if [[ "$raw" =~ ^[0-9]+$ ]]; then
+        dir="$(find_lesson_dir_by_number "$raw")" || {
+            echo "Error: no folder for lesson $raw (expected lesson_${raw} or lesson$(printf '%02d' "$raw")_*)" >&2
+            exit 1
+        }
+        entry="$(lesson_entry_script "$LESSONS_DIR/$dir")" || {
+            echo "Error: no run.py or challenge.py in $dir" >&2
+            exit 1
+        }
+        echo "$LESSONS_DIR/$dir/$entry"
+        return
+    fi
+
+  # lesson_6, lesson6, lesson_6/run.py
+    if [[ "$raw" =~ ^lesson_?([0-9]+)(/.*)?$ ]]; then
+        local num
+        num="${BASH_REMATCH[1]}"
+        suffix="${BASH_REMATCH[2]}"
+        dir="$(find_lesson_dir_by_number "$num")" || {
+            echo "Error: no folder for lesson $num" >&2
+            exit 1
+        }
+        if [[ -z "$suffix" ]]; then
+            entry="$(lesson_entry_script "$LESSONS_DIR/$dir")" || {
+                echo "Error: no run.py or challenge.py in $dir" >&2
+                exit 1
+            }
+            echo "$LESSONS_DIR/$dir/$entry"
+            return
+        fi
+        echo "$LESSONS_DIR/$dir$suffix"
+        return
+    fi
+
+    if [[ "$raw" == */run.py || "$raw" == */challenge.py ]]; then
+        name="$raw"
+    elif [[ -d "$LESSONS_DIR/$raw" ]]; then
+        entry="$(lesson_entry_script "$LESSONS_DIR/$raw")" || {
+            echo "Error: no run.py or challenge.py in $raw" >&2
+            exit 1
+        }
+        name="$raw/$entry"
+    else
+        local base hit
+        base="${raw%%/*}"
+        hit="$(find "$LESSONS_DIR" -maxdepth 1 -type d -name "${base}*" 2>/dev/null | sort | head -n 1)"
+        if [[ -n "$hit" ]]; then
+            if [[ "$raw" == */* ]]; then
+                name="$(basename "$hit")/${raw#*/}"
+            else
+                entry="$(lesson_entry_script "$hit")" || true
+                if [[ -n "$entry" ]]; then
+                    name="$(basename "$hit")/$entry"
+                fi
+            fi
+        fi
+        if [[ -z "${name:-}" ]]; then
+            name="$raw"
+            [[ "$name" == */run.py || "$name" == */challenge.py ]] || name="${name%/}/run.py"
+        fi
+    fi
+
+    local full="$LESSONS_DIR/$name"
+    if [[ ! -f "$full" ]]; then
+        echo "Error: lesson file not found: $full" >&2
+        echo "Tip: ls lesson*" >&2
+        exit 1
+    fi
+    echo "$full"
+}
+
+check_shared_lesson_files() {
+    local target="$1"
+    if grep -q 'import groq_env' "$target" 2>/dev/null; then
+        if [[ ! -f "$LESSONS_DIR/groq_env.py" ]]; then
+            echo "Error: missing $LESSONS_DIR/groq_env.py" >&2
+            echo "  Lessons 6–7 need this file next to lesson_6, lesson_7, and venv/." >&2
+            echo "  Copy it from the kit: lessons/groq_env.py" >&2
+            exit 1
+        fi
+    fi
+    if grep -q 'import tm_audio_runtime' "$target" 2>/dev/null; then
+        if [[ ! -f "$LESSONS_DIR/tm_audio_runtime.py" ]]; then
+            echo "Error: missing $LESSONS_DIR/tm_audio_runtime.py" >&2
+            echo "  Lessons 8–10 need this file in the lessons folder." >&2
+            exit 1
+        fi
+    fi
+}
+
+main() {
+    [[ $# -ge 1 ]] || usage
+
+    local py target lesson_dir
+    py="$(find_venv_python)" || {
+        echo "Error: no Python in lessons/venv or lessons/.venv" >&2
+        echo "Create it:  python3 -m venv venv && ./venv/bin/pip install -r lessonNN/requirements.txt" >&2
+        exit 1
+    }
+
+    target="$(resolve_lesson_path "$1")"
+    lesson_dir="$(dirname "$target")"
+    check_shared_lesson_files "$target"
+
+    log "Using: $py"
+    log "Lesson: $target"
+    stop_captive
+    sleep 0.5
+
+    cd "$lesson_dir"
+    export PYTHONPATH="${LESSONS_DIR}${PYTHONPATH:+:$PYTHONPATH}"
+    set +e
+    "$py" "$(basename "$target")"
+    LESSON_EXIT=$?
+    set -e
+
+    if [[ "$LESSON_EXIT" -eq 0 ]]; then
+        log "Lesson finished (exit 0)."
+    else
+        log "Lesson exited with code $LESSON_EXIT."
+    fi
+}
+
+main "$@"

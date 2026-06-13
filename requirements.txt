@@ -1,0 +1,12 @@
+# Install inside lessons/venv on the Raspberry Pi:
+#   python3 -m venv venv
+#   ./venv/bin/pip install -r requirements.txt
+#
+# tflite-runtime wheels are Pi/ARM-specific; run pip on the device, not a laptop.
+
+RPi.GPIO>=0.7.0
+groq>=0.37.0
+python-dotenv>=1.0.0
+numpy>=1.23.0
+tflite-runtime>=2.14.0
+sounddevice>=0.4.6

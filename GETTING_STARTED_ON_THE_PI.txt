@@ -1,0 +1,149 @@
+Getting started on the Raspberry Pi — lessons folder
+======================================================
+
+This kit keeps lesson code in the  lessons  folder. Use the commands below
+in a terminal (black window on the Pi desktop, or SSH).
+
+
+Where am I?
+-----------
+After login, open a terminal and go to the lessons folder:
+
+  cd ~/lessons
+
+If that fails, try:
+
+  cd ~/Voicedevice/lessons
+  cd /opt/voicedevice/lessons
+
+Check you are in the right place:
+
+  ls
+
+You should see folders like  lesson_1 ,  lesson_2 , …  lesson_10 ,  run  (or  run.sh ),  venv .
+
+Shared files (same folder as  lesson_1 , not inside each lesson):
+  groq_env.py           — lessons 6 and 7 (load your Groq API key from .env)
+  tm_audio_runtime.py   — lessons 8, 9, and 10 (Teachable Machine audio)
+  labels.txt            — lessons 8–10 (from your TM model export)
+
+If lesson 6 says  No module named groq_env , copy  groq_env.py  into  ~/lessons .
+
+
+Running a lesson (recommended)
+------------------------------
+Lessons use a shared Python environment in the  venv  folder.
+Use the  run  script — it stops the Wi-Fi captive portal while you work,
+then turns the portal back on when you finish.
+
+  cd ~/lessons
+  ./run lesson_1
+  ./run.sh lesson_1          # same as ./run
+
+Shortcuts:
+
+  ./run 6                  → lesson_6/challenge.py
+  ./run lesson_6           → same
+  ./run lesson_10/challenge.py
+
+When the lesson is running, press  Ctrl+C  to stop. The captive portal
+service starts again automatically.
+
+Note:  venv  is the Python environment folder. The launcher is  ./run  (a
+separate file), not  ./venv  by itself.
+
+
+Why ./run stops the captive portal
+----------------------------------
+The kit runs  captiveportal.service  so you can connect Wi-Fi and enter
+your Groq key. While a lesson uses the microphone, speaker, or GPIO, the
+portal is paused so nothing fights for those resources.  ./run  handles
+that for you.
+
+
+Editing code with nano
+----------------------
+  nano lesson_1/challenge.py
+
+Use the arrow keys to move. Edit the lines marked  TODO  or  student_flow .
+
+Save and exit:
+  Ctrl+O   then Enter   (write file)
+  Ctrl+X                (exit nano)
+
+Cancel without saving:
+  Ctrl+X   then  N  when asked to save
+
+
+Listing and moving between folders
+----------------------------------
+  ls              list files in this folder
+  ls lesson*      list all lesson folders
+  cd lesson_1
+  cd ..           go up one folder
+  pwd             print current folder path
+
+
+Stopping a running program
+--------------------------
+  Ctrl+C          stop the program in the foreground (lessons, tests)
+  Ctrl+Z          suspend (advanced — avoid unless you know job control)
+
+If you used  ./run , Ctrl+C also restarts the captive portal.
+
+
+Copying a file from your laptop (optional)
+-----------------------------------------
+From your computer (not on the Pi), if you know the Pi IP address:
+
+  scp myfile.wav voicedevice@192.168.x.x:~/lessons/lesson08_barnyard_tm/
+
+Replace the IP and path with yours.
+
+
+Groq API key (lessons 6 and 7)
+------------------------------
+Create a free key at https://console.groq.com
+
+Save it in a file named  .env  (in the lesson folder or in  ~/lessons ):
+
+  GROQ_API_KEY=gsk_your_key_here
+
+Then run the lesson with  ./run 6  or  ./run 7
+
+
+Reset a lesson (Git)
+--------------------
+If you cloned the lessons repo from GitHub:
+
+  cd ~/lessons
+  ./reset_lesson.sh 1              # one lesson (my_program.py)
+  ./reset_lesson.sh --all          # all tracked files
+
+Or:  git checkout -- lesson_01_red_led/my_program.py
+
+
+Install packages into lessons/venv (first time or new lesson)
+-------------------------------------------------------------
+  cd ~/lessons
+  python3 -m venv venv
+  ./venv/bin/pip install -r lesson06_led_prompt/requirements.txt
+
+Repeat  pip install -r ...  when a lesson README lists new packages.
+
+
+If ./run says permission denied
+-------------------------------
+  chmod +x ~/lessons/run ~/lessons/run.sh
+
+If systemctl needs a password, ask your facilitator — the kit image may
+use passwordless  sudo  for  systemctl  only.
+
+
+Quick reference
+---------------
+  cd ~/lessons
+  ls
+  nano lessonNN_.../challenge.py
+  ./run lessonNN_.../challenge.py
+  Ctrl+C   stop lesson + restart captive portal

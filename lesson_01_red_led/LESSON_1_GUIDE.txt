@@ -1,0 +1,129 @@
+Lesson 1 — Red LED
+==================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+In this lesson you use code to turn the kit’s red LED on and off — like flipping a
+light switch, but the Raspberry Pi is doing the flipping.
+
+You edit one file (`my_program.py`). The kit gives you ready-made actions in
+`helper.py` (you do not change that file).
+
+What is GPIO?
+
+GPIO means “general purpose input/output.” Think of each GPIO pin as a wire the Pi
+can set HIGH (on) or LOW (off). Your red LED is connected to one of those pins.
+
+What will you need to do?
+
+1. Set two values at the top of `my_program.py` (which pin, and how “on” works).
+2. Fill in `my_program()` with a short sequence: prepare → on → wait → off.
+3. Run `run.py` and watch the LED.
+
+Real-world use
+
+Traffic lights, room lamps, status lights on robots, and “something went wrong”
+warning lights all use the same idea: output on or off on purpose.
+
+
+Step 2: Create it
+-----------------
+
+What you need
+
+  • VoiceKit (Raspberry Pi Zero 2 W + board)
+  • USB power or battery pack
+  • Pin diagram (in the box or ~/lessons/PINOUT.txt when provided)
+  • This lesson folder: lesson_01_red_led
+
+Files in this lesson
+
+  my_program.py   ← YOU edit this
+  helper.py       ← kit code (do not edit)
+  run.py          ← starts your program (do not edit)
+
+Step A — open your program
+
+  cd ~/lessons/lesson_01_red_led
+  nano my_program.py
+
+Step B — fill in the two settings
+
+At the top of `my_program.py`:
+
+  LED_PIN = 26          # red LED on this kit (check pin diagram)
+  LED_ON_LEVEL = "HIGH"
+
+Step C — build my_program()
+
+Uncomment and use the steps in order:
+
+  pick_how_led_turns_on(LED_ON_LEVEL)
+  prepare_led(LED_PIN)
+  light_on()
+  pause(3)
+  light_off()
+
+Step D — run it
+
+From the lessons folder:
+
+  cd ~/lessons
+  ./run 1
+
+You should see “LED is ON”, a 3-second wait, then “LED is OFF”, then
+“Cleanup complete.”
+
+
+How the code works
+
+  pick_how_led_turns_on   — remembers whether HIGH or LOW means “on” for your LED
+  prepare_led             — tells the Pi which pin controls the LED
+  light_on / light_off    — actually switches the LED
+  pause                   — waits (in seconds) without doing anything else
+
+`run.py` calls your `my_program()`, then always turns the LED off and cleans up
+GPIO — even if you press Ctrl+C.
+
+
+Step 3: Test and improve it
+---------------------------
+
+Does it work?
+
+  • LED glows for about 3 seconds, then goes off.
+  • Terminal shows LED is ON / LED is OFF / Cleanup complete.
+
+If it does not work
+
+  • Check LED_PIN matches the pin diagram (usually 26).
+  • Make sure you uncommented every line in my_program().
+  • Run from ~/lessons: ./run 1
+
+Evaluation
+
+  • Did the LED behave the way you expected?
+  • What would happen if you changed pause(3) to pause(10)?
+  • Who might use a programmable status LED in a real product?
+
+
+Step 4: Go further
+------------------
+
+  • Blink twice: on → off → on → off.
+  • Morse “SOS”: three short flashes, three long, three short.
+
+Reset your file
+
+  cd ~/lessons
+  git checkout -- lesson_01_red_led/my_program.py
+
+Or: ./reset_lesson.sh 1
+
+Reset all lessons
+
+  cd ~/lessons
+  ./reset_lesson.sh --all

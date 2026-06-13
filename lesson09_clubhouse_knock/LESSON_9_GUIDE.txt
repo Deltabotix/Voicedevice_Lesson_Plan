@@ -1,0 +1,37 @@
+Lesson 9 — Secret clubhouse knock (Teachable Machine, Module 9)
+===============================================================
+
+What this is
+------------
+You train **password** audio classes (plus **background**) in Teachable Machine, export **TensorFlow Lite** + **labels.txt**, and run this lesson on the Pi. The program is a tiny **access gate**: only certain class names count as “the knock”; everything else confident enough can count as “not welcome.” **Confidence** and **cooldown** stop chatter and double fires. Matching a class name is **not** the same as understanding English—it is pattern matching on audio you trained.
+
+
+What you fill in
+----------------
+• **UNLOCK_LABELS** — `frozenset` of exact TM class names that open the clubhouse.  
+• **IGNORE_LABELS** — background / noise names (no LED, no deny sound).  
+• **MIN_SCORE**, **UNLOCK_MIN_SCORE**, **INTRUDER_MIN_SCORE** — tune false accepts vs misses.  
+• **COOLDOWN_SEC** — pause after any success/deny feedback.  
+• **SUCCESS_WAV**, **DENY_WAV** — paths to short WAV files.  
+• **LED_OK_PIN**, **LED_NO_PIN**, **ON_STATE_KEYWORD** — match your kit wiring (defaults follow common VoiceKit L1/L2 pins).  
+• **SAMPLE_RATE**, **MIC_DEVICE**, **OUTPUT_DEVICE** — same ideas as Lesson 8.  
+• **student_flow()** — default calls **run_clubhouse()**.
+
+
+Teachable Machine tips
+-----------------------
+• Record **many** password variants and a strong **background** class.  
+• If the model always picks one label, fix **labels.txt** order (Lesson 8 guide) and retrain.  
+• Prefer training with the **same INMP441** path you use on the Pi (Chromium on Pi, or same mic on another machine).
+
+
+How to run
+----------
+  cd .../lesson09_clubhouse_knock
+  python3 -m pip install -r requirements.txt
+  python3 challenge.py
+
+
+Success check
+-------------
+Password → printed **UNLOCK** + OK LED + success WAV. Wrong word with high score → **DENY** + NO LED + deny WAV. Quiet room → mostly nothing.

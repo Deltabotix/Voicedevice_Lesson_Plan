@@ -1,0 +1,26 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Secrets and local config
+.env
+*.env.local
+
+# Student / Teachable Machine exports (not shipped in repo)
+**/model.tflite
+**/soundclassifier_with_metadata.tflite
+**/labels.txt
+
+# Audio / large binaries
+*.mp3
+*.wav
+*.zip
+
+# Editor / OS
+.DS_Store
+*.swp
+*~

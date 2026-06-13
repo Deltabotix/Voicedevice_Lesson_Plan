@@ -1,0 +1,63 @@
+Lesson 2 — MOSFET + 12 V strip + servo (Module 2)
+================================================
+
+What this is (very short)
+-------------------------
+**12 V LED strip:** the Pi does **not** power 12 V. The **MOSFET** is a switch; **PWM** on pin **12** sets how much “on time” the strip sees → looks brighter or dimmer. Power comes from the **12 V adapter** only on the strip side of the circuit.
+
+**Servo:** a small motor that goes to an **angle** (0°–180°). It needs **pauses** between moves so it can finish turning. This kit allows the servo signal on BCM pins **4, 5, 6, 17, or 27** — pick the one your breakout uses.
+
+
+What you must fill in
+---------------------
+1) **SERVO_PIN** — one of `4, 5, 6, 17, 27` (from your kit diagram).
+2) **student_flow()** — call setup helpers, then move the servo through **three** angles (e.g. left / middle / right), then change strip brightness in **steps** or use **ramp_strip_brightness**, and **end with strip at 0%**.
+
+
+Every function in the challenge code
+--------------------------------------
+setup_mosfet_strip()
+  Sets BCM mode if needed, configures pin **12**, starts **1000 Hz** PWM at **0%** (strip off).
+
+set_strip_brightness_percent(percent)
+  **0–100** duty on the MOSFET pin. Higher = brighter (how it looks depends on wiring and LED strip).
+
+ramp_strip_brightness(start, end, step, pause_ms)
+  Steps from **start**% toward **end**% in jumps of **step**, waiting **pause_ms** between steps — a simple “fade” without fancy math.
+
+setup_servo(pin)
+  Starts **50 Hz** PWM on your **SERVO_PIN** for a standard hobby servo.
+
+set_servo_angle(angle)
+  Sets duty for **0°–180°**, waits briefly, then sets duty to **0** (many lessons do this so the line idles).
+
+wait_seconds / wait_ms
+  Pauses between moves or brightness steps.
+
+_stop_mosfet_pwm / _stop_servo_pwm
+  Internal — used by **safe_cleanup**; you do not call them.
+
+safe_cleanup()
+  Stops PWMs, **GPIO.cleanup()**.
+
+run_with_guard / main
+  Errors + always cleanup.
+
+
+Hints (small)
+-------------
+• **Order:** usually `setup_mosfet_strip` → `setup_servo` → servo moves → strip steps/ramp → `set_strip_brightness_percent(0)`.
+• Keep classroom **max brightness** modest (e.g. cap at **60–80%** in your flow unless your teacher says otherwise).
+• If the servo jitters, increase pauses after `set_servo_angle`.
+• **MOSFET_PIN** is fixed at **12** for this kit — do not change it in the lesson file.
+
+
+How to run
+----------
+  cd .../lesson02_mosfet_servo
+  python3 challenge.py
+
+
+Success check
+-------------
+Servo visits at least three angles with visible pauses. Strip goes through a few brightness levels or a ramp, then **fully off** (0%). `Cleanup complete.`

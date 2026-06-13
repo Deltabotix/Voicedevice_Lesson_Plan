@@ -1,0 +1,4 @@
+# Module 8 — waveform TFLite + labels.txt (small install vs full MediaPipe).
+numpy>=1.23.0
+tflite-runtime>=2.14.0
+sounddevice>=0.4.6

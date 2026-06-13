@@ -1,0 +1,34 @@
+Lesson 10 — Voice beat sequencer (Teachable Machine, Module 10)
+===============================================================
+
+What this is
+------------
+You treat voice like a **tiny drum machine**: each **Teachable Machine class** is one kit sound. You speak a **sequence** of class names in order; the Pi **records** that sequence, then **plays** the matching WAV files in a **loop** until you say **stop** (trained class) in the short gap between loops, or you press **Ctrl+C**. Optional **LED flash** on each hit ties to Module 1 / kit LED story.
+
+
+What you fill in
+----------------
+• **BEAT_LABEL_TO_WAV** — keys = **exact** TM class names; values = paths to short WAVs (`sounds/beat_kit/` is a good place).  
+• **STOP_CLASS_NAME** — TM class that means “done recording” and “exit playback loop.”  
+• **IGNORE_LABELS** — background noise class names.  
+• **MIN_SCORE**, **BEAT_MIN_SCORE**, **STOP_MIN_SCORE** — confidence tuning.  
+• **MAX_PATTERN_LEN**, **BEAT_GAP_SEC**, **LOOP_GAP_SEC**, **DEBOUNCE_SEC** — musical spacing and duplicate suppression.  
+• **FLASH_LED_ON_BEAT**, **LED_BEAT_PIN**, **ON_STATE_KEYWORD** — optional downbeat flash.  
+• **SAMPLE_RATE**, **MIC_DEVICE**, **OUTPUT_DEVICE** — same as Lesson 8.
+
+
+Why order matters
+-----------------
+The pattern list is **exactly** the order you successfully recognized hits in Phase A. One misheard word in training or at runtime **breaks the groove**—same lesson as data quality in Module 8.
+
+
+How to run
+----------
+  cd .../lesson10_voice_beat_sequencer
+  python3 -m pip install -r requirements.txt
+  python3 challenge.py
+
+
+Success check
+-------------
+Phase A prints `+ 'drum'` lines as you go; **stop** freezes the pattern. Phase B repeats the loop; **stop** between loops prints exit message.

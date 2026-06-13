@@ -1,0 +1,93 @@
+Lesson 8 — Barnyard soundboard (Teachable Machine, Module 8)
+===========================================================
+
+What this is
+------------
+You train a small **audio** model in **Teachable Machine** (animal words or noises, plus a **background** class). You export **TensorFlow Lite**, copy the **`.tflite`** file and **`labels.txt`** into this lesson folder, and map each class name to a **WAV** file. The Pi runs inference with **`tflite_runtime`** (TensorFlow Lite interpreter), records short windows with **`sounddevice`**, and plays sounds with **`aplay`**—same idea as a minimal “mic → NumPy → TFLite → labels” script, but wired into **`LABEL_TO_SOUND`** and safety knobs (**`MIN_SCORE`**, **`COOLDOWN_SEC`**).
+
+
+Getting the Teachable Machine files onto the Pi
+------------------------------------------------
+The export **zip** usually contains:
+
+• **`model.tflite`** or **`soundclassifier_with_metadata.tflite`** — put **one** of them in this folder (this lesson tries **`model.tflite` first**, then the sound classifier name).  
+• **`labels.txt`** — **required**; one class name per line, in the same **order** as the model’s output scores (index 0 = first line, etc.). Lines like `0 Background Noise` are OK.
+
+Transfer: USB stick, **`scp` from your PC** (below), download in Chromium on the Pi, or a classroom share.
+
+**`scp` from PC / laptop to Raspberry Pi** (run these on the **computer that has the files**, not on the Pi). Replace `USER`, `PI_IP`, and the destination path with yours (example user `voicedevice`, example path for this lesson):
+
+  scp model.tflite labels.txt USER@PI_IP:~/Voicedevice/lessons/lesson08_barnyard_tm/
+
+If your model kept the long name:
+
+  scp soundclassifier_with_metadata.tflite labels.txt USER@PI_IP:~/Voicedevice/lessons/lesson08_barnyard_tm/
+
+Copy a whole folder of WAVs (e.g. `sounds/`):
+
+  scp -r sounds USER@PI_IP:~/Voicedevice/lessons/lesson08_barnyard_tm/
+
+First connection, SSH may ask you to trust the host; you need the Pi’s **IP address** (e.g. from your router or `hostname -I` on the Pi) and **SSH enabled** on the Pi (`sudo raspi-config` → Interface Options → SSH, or the equivalent on your image).
+
+Then on the Pi, check:
+
+  ls -la model.tflite labels.txt  
+  # or: soundclassifier_with_metadata.tflite labels.txt
+
+
+What you must fill in
+---------------------
+1) **Model + labels** — `.tflite` + **`labels.txt`** next to `challenge.py` (see above).  
+2) **`LABEL_TO_SOUND`** — keys match **labels.txt** exactly; values are paths to **WAV** files (often under **`sounds/`**).  
+3) **`SAMPLE_RATE`** — must match your export (many waveform models use **16000** Hz). Wrong rate ⇒ wrong window length ⇒ bad scores.  
+4) **`IGNORE_LABELS`** — class names that should **never** trigger a WAV (your background / noise class).  
+5) **`MIN_SCORE`** — minimum confidence before playing (reduces false triggers).  
+6) **`COOLDOWN_SEC`** — minimum time between sounds.  
+7) **`OUTPUT_DEVICE`** — ALSA string for **`aplay`** if default speaker is wrong (`aplay -l`).  
+8) **`MIC_DEVICE`** — **`None`** for default; or an **integer** device index from `python3 -m sounddevice` if the wrong mic is used.  
+9) **INMP441 / room noise** — **`REMOVE_DC_OFFSET`**, **`AMBIENT_CALIB_SEC`**, **`AMBIENT_GATE_MULT`**, **`AMBIENT_DYNAMIC_MIN_SCORE`** (see comments in `challenge.py`).  
+10) **`student_flow()`** — default calls **`run_barnyard_soundboard()`**; change only if experimenting.
+
+
+Every function in the challenge code
+--------------------------------------
+**`resolve_model_path()`** — Picks **`model.tflite`** or **`soundclassifier_with_metadata.tflite`** if present.  
+**`run_barnyard_soundboard()`** — Loads model + labels, optional ambient calibration, listen → gate → classify → play loop.  
+**`ensure_model_and_deps()`** — Checks **`tflite_runtime`** (or **`tensorflow.lite`** fallback), **`sounddevice`**, model file, **`labels.txt`**.  
+**`preprocess_inmp441(...)`** — Optional **DC removal** per window (helps some I2S front ends).  
+**`calibrate_ambient_floor_rms(...)`** — Short **quiet** capture; **median** of sub-window RMS → noise floor.  
+**`window_rms(...)`** — RMS of float32 audio.  
+**`effective_min_score(...)`** — Optional **dynamic** `MIN_SCORE` bump in louder moments vs floor.  
+**`resolve_sound_path(...)`** — **`Path`** or **`str`** for WAV paths; relative paths resolve under the lesson folder.  
+**`load_labels(path)`** — Reads **`labels.txt`**, strips lines, parses optional `index Name` prefix.  
+**`load_tflite_bundle(...)`** — Builds **`Interpreter`**, reads **input shape** (must be **waveform**, not 4D spectrogram), optional dry-run to compare label count vs output size.  
+**`record_mono_float32(...)`** — **`sd.rec`** + **`sd.wait`**, mono **float32**.  
+**`predict(bundle, audio)`** — **`set_tensor`**, **`invoke`**, softmax if needed, **argmax** → label string + score.  
+**`_maybe_softmax(...)`** — Treats logits or already-probabilistic outputs.  
+**`play_wav(path, device)`** — **`aplay`** playback.  
+**`print_audio_hint()`** — Short checklist on stderr.
+
+
+Model type (important)
+-----------------------
+This lesson expects a **float32 waveform** input (e.g. shape **`[1, N]`** samples). If the model input is **4D** (spectrogram image), loading raises a clear error—those exports need a different pipeline (not this file).
+
+
+Training tips (short)
+---------------------
+• Train a strong **background** class.  
+• More **varied** clips per word beats one repeated clip.  
+• If **`MIN_SCORE`** is too low you get phantom triggers; too high you miss real words.
+
+
+How to run
+----------
+  cd .../lesson08_barnyard_tm
+  python3 -m pip install -r requirements.txt
+  # optional: sudo apt install portaudio19-dev
+  python3 challenge.py
+
+
+Success check
+-------------
+Say a trained word: the terminal prints **`→ label (score) play file.wav`** and you hear it. Background should usually map to **`IGNORE_LABELS`** and stay quiet.

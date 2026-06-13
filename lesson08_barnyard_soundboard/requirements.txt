@@ -1,0 +1,4 @@
+# Same stack as lesson08_barnyard_tm (TFLite + sounddevice; no MediaPipe).
+numpy>=1.23.0
+tflite-runtime>=2.14.0
+sounddevice>=0.4.6
