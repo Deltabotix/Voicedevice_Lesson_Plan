@@ -5,7 +5,7 @@ Hands-on coding lessons for the Voice Device kit (Raspberry Pi). Students edit *
 ## Quick start (on the Pi)
 
 ```bash
-git clone https://github.com/YOUR_ORG/voicedevice-lessons.git ~/lessons
+git clone https://github.com/Deltabotix/Voicedevice_Lesson_Plan.git ~/lessons
 cd ~/lessons
 chmod +x run run.sh reset.sh reset_lesson.sh update.sh setup_venv.sh
 ./setup_venv.sh
