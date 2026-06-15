@@ -34,20 +34,30 @@ See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full 
 | `./reset.sh --all` | Restore all tracked files |
 | `./update.sh` | `git pull` latest lessons |
 
-## Lesson 1 (template)
+## New-style lessons (1–9)
 
-New-style folder: **`lesson_01_red_led/`** — `my_program.py`, `helper.py`, `run.py`, guide.
+| # | Folder | Topic |
+|---|--------|--------|
+| 1 | `lesson_01_red_led` | Red LED |
+| 2 | `lesson_02_buzzer` | Passive buzzer (PWM) |
+| 3 | `lesson_03_led_strip` | 12 V strip + MOSFET |
+| 4 | `lesson_04_servo` | Servo angles |
+| 5 | `lesson_05_ir_sensor` | IR sensor + LED |
+| 6 | `lesson_06_speaker` | Speaker / aplay |
+| 7 | `lesson_07_mic_speaker` | Mic record + playback |
+| 8 | `lesson_08_led_prompt` | Groq → LED (prompt engineering) |
+| 9 | `lesson_09_traffic_cop` | Groq CONTROL vs GENERAL |
 
-Legacy folders (`lesson01_led_basics`, …) still use `challenge.py` / `starter.py` until migrated.
+Legacy folders (`lesson03_ir_sensor_led`, …) still use `challenge.py` until removed.
 
-## Groq (lessons 6–7)
+## Groq (lessons 8–9)
 
 Uses **`groq`** and **`python-dotenv`** from the voicekit venv. Set your key in `.env`:
 
 1. Create a key at [console.groq.com](https://console.groq.com)
 2. Copy `.env.example` → `.env` (or use `/opt/voicedevice/.env` on the kit)
 
-## Teachable Machine (lessons 8–10)
+## Teachable Machine (lessons 10+)
 
 Export **TensorFlow Lite** + **`labels.txt`** into the lesson folder (not in this repo).
 

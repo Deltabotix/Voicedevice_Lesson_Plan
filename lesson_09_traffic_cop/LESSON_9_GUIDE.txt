@@ -1,0 +1,87 @@
+Lesson 9 — Traffic cop
+======================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+Before sending words to motors or lights, a smart device needs a **gate**: is this
+sentence a **hardware command** or **normal chat**?
+
+This lesson uses **Groq** to tag each line as:
+
+  • **CONTROL** — user wants hardware to do something.
+  • **GENERAL** — questions, facts, small talk — not hardware.
+
+Optional: the **LED blinks** when the tag is CONTROL so the whole class sees the split.
+
+What will you need to do?
+
+1. **GROQ_API_KEY** in `.env` (same as Lesson 8).
+2. Edit **PROMPT_TEMPLATE** and **TEST_PHRASES**.
+3. Run `./run 9`.
+
+Real-world use
+
+Voice assistants use a step like this so “what’s 2+2?” does not accidentally spin a motor.
+
+
+Step 2: Create it
+-----------------
+
+Step A — settings in my_program.py
+
+  LED_PIN = 26
+  LED_ON_LEVEL = "HIGH"
+  BLINK_ON_CONTROL = True
+
+  TEST_PHRASES = [
+      "turn the LED on",
+      "set the servo to ninety degrees",
+      "what is the capital of France",
+      "tell me a joke",
+  ]
+
+Step B — my_program()
+
+  helper.check_traffic_lab_ready(TEST_PHRASES, PROMPT_TEMPLATE)
+  helper.pick_how_led_turns_on(LED_ON_LEVEL)
+  helper.prepare_led(LED_PIN)
+  helper.light_off()
+
+  for phrase in TEST_PHRASES:
+      tag = helper.classify_route(phrase, PROMPT_TEMPLATE)
+      print(f"{phrase!r} -> {tag}")
+      helper.blink_on_control(tag, BLINK_ON_CONTROL)
+      helper.pause(0.35)
+
+Step C — run
+
+  cd ~/lessons
+  ./run 9
+
+
+Step 3: Test and improve it
+---------------------------
+
+Success
+
+  • Hardware-ish lines → CONTROL (LED blinks if enabled).
+  • Chat/math lines → GENERAL.
+  • You can explain one mis-sort and a prompt fix.
+
+Troubleshooting
+
+  • Chat tagged CONTROL → tighten prompt (“only explicit hardware commands”).
+  • Wrong tag names break downstream code — keep CONTROL and GENERAL spelled exactly.
+
+Go further
+
+  • Set BLINK_ON_CONTROL = False for text-only mode.
+  • Add edge cases: “could you please turn on the light” vs “how do LEDs work?”
+
+Reset
+
+  cd ~/lessons
+  ./reset.sh 9

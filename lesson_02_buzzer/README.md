@@ -1,20 +1,20 @@
-# Lesson 1 — Red LED
+# Lesson 2 — Buzzer
 
 **Edit only:** `my_program.py`  
 **Do not edit:** `helper.py`, `run.py`
+
+Passive buzzer — beeps use **PWM** (a tone at a frequency), not a steady on/off like the LED.
 
 ## Run
 
 ```bash
 cd ~/lessons
-./run 1
+./run 2
 ```
 
 ## Reset (Git)
 
 ```bash
 cd ~/lessons
-git checkout -- lesson_01_red_led/my_program.py
-# or
-./reset.sh 1
+./reset.sh 2
 ```

@@ -1,0 +1,92 @@
+Lesson 5 — IR sensor + red LED
+==============================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+The **IR sensor** is an **input** — the Pi **reads** whether something is in front of it.
+The **red LED** is an **output** — the Pi **writes** on or off.
+
+Your program **polls** (reads again and again in a loop): when something is nearby,
+turn the LED on; when clear, turn it off.
+
+What will you need to do?
+
+1. Set **LED_ON_LEVEL**, **IR_PIN**, and **BLOCKED_IS** at the top of `my_program.py`.
+2. Build a polling loop in `my_program()`.
+3. Run `./run 5`.
+
+Real-world use
+
+Automatic doors, parking sensors, and “object detected” lights on robots use the
+same input → decision → output pattern.
+
+
+Step 2: Create it
+-----------------
+
+What you need
+
+  • VoiceKit + IR sensor module wired to a GPIO pin
+  • Pin diagram for IR signal pin and red LED (LED = BCM **26** on this kit)
+  • Folder: lesson_05_ir_sensor
+
+Files
+
+  my_program.py   ← YOU edit
+  helper.py       ← kit code
+  run.py          ← runner
+
+Step A — settings in my_program.py
+
+  LED_PIN = 26
+  LED_ON_LEVEL = "HIGH"
+  IR_PIN = 27              # your wiring — check diagram
+  BLOCKED_IS = "LOW"       # flip to "HIGH" if the LED never reacts
+
+Step B — my_program()
+
+  pick_how_led_turns_on(LED_ON_LEVEL)
+  pick_when_blocked_is(BLOCKED_IS)
+  prepare_led(LED_PIN)
+  prepare_ir_sensor(IR_PIN)
+
+  for _ in range(120):
+      if something_nearby():
+          light_on()
+      else:
+          light_off()
+      pause_ms(50)
+
+Step C — run
+
+  cd ~/lessons
+  ./run 5
+
+Wave a hand in front of the sensor — the LED should follow your rule.
+
+
+Step 3: Test and improve it
+---------------------------
+
+Success
+
+  • LED on when blocked, off when clear (or your blink variant).
+  • LED off after cleanup.
+
+Troubleshooting
+
+  • Flip **BLOCKED_IS** if behaviour is backwards.
+  • Wrong **IR_PIN** → no reaction.
+  • Flickery LED → try pause_ms(100).
+
+Go further
+
+  • Blink when blocked: light_on(); pause_ms(80); light_off() inside the if branch.
+
+Reset
+
+  cd ~/lessons
+  ./reset.sh 5

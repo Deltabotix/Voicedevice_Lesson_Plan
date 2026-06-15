@@ -1,0 +1,66 @@
+Lesson 7 — Microphone + speaker
+===============================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+You **record** a few seconds from the mic (**arecord** → WAV file), check a simple
+**loudness** number (peak 0–1), then **play** the clip back (**aplay**). That proves
+both **listen** and **talk** paths on one Pi.
+
+What will you need to do?
+
+1. Set **INPUT_DEVICE**, **OUTPUT_DEVICE**, **RECORD_SECONDS**.
+2. Record → loudness_level → play_sound in `my_program()`.
+3. Run `./run 7`.
+
+Real-world use
+
+Voice assistants record your speech before sending it anywhere — same idea at a smaller scale.
+
+
+Step 2: Create it
+-----------------
+
+Step A — settings
+
+  INPUT_DEVICE = ""
+  OUTPUT_DEVICE = ""
+  RECORD_SECONDS = 3
+
+Step B — my_program()
+
+  check_audio_tools()
+  record(RECORD_SECONDS, CAPTURE_FILE, INPUT_DEVICE)
+  loudness_level(CAPTURE_FILE)
+  play_sound(CAPTURE_FILE, OUTPUT_DEVICE)
+
+Step C — run
+
+  cd ~/lessons
+  ./run 7
+
+Speak during the 3-second record. Peak should not stay at 0.
+
+
+Step 3: Test and improve it
+---------------------------
+
+Success
+
+  • capture.wav appears.
+  • Loudness peak > 0 when you talked.
+  • You hear playback (volume low to avoid squeal).
+
+Troubleshooting
+
+  • arecord -l / aplay -l for device names.
+  • Wrong INPUT_DEVICE → silent capture.
+  • Feedback → lower speaker volume; use find_reply_sound() instead of replay.
+
+Reset
+
+  cd ~/lessons
+  ./reset.sh 7

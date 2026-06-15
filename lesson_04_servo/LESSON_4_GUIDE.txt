@@ -1,0 +1,121 @@
+Lesson 4 — Servo
+================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+A **servo** is a small motor that moves to a chosen **angle** — like a door hinge
+that stops at “closed,” “half open,” or “open.” It is **not** a wheel that spins forever.
+
+The Pi sends a **PWM** signal (50 times per second on this kit). Different pulse widths
+map to angles from **0°** to **180°**. After each move, the servo needs a **pause** so
+it can physically reach the angle before the next command.
+
+What will you need to do?
+
+1. Set **SERVO_PIN** to the pin your servo signal wire uses (see diagram).
+2. Fill in `my_program()` — three angles with pauses (e.g. left / middle / right).
+3. Run `./run 4`.
+
+Real-world use
+
+Robot arms, camera gimbals, RC car steering, and automatic pet feeders use servos
+to hit exact positions.
+
+
+Step 2: Create it
+-----------------
+
+What you need
+
+  • VoiceKit + hobby servo connected to an allowed AUX pin
+  • Pin diagram — signal pin must be one of: **4, 5, 6, 17, 27** (BCM)
+  • This folder: lesson_04_servo
+
+Files in this lesson
+
+  my_program.py   ← YOU edit this
+  helper.py       ← kit code (do not edit)
+  run.py          ← starts your program (do not edit)
+
+Step A — open your program
+
+  cd ~/lessons/lesson_04_servo
+  nano my_program.py
+
+Step B — set your servo pin
+
+At the top of `my_program.py` (example — use **your** wiring):
+
+  SERVO_PIN = 17
+
+Allowed values only: 4, 5, 6, 17, or 27.
+
+Step C — build my_program()
+
+Uncomment and use the steps in order:
+
+  prepare_servo(SERVO_PIN)
+  move_to(0)
+  pause(1)
+  move_to(90)
+  pause(1)
+  move_to(180)
+
+Step D — run it
+
+  cd ~/lessons
+  ./run 4
+
+You should see the servo visit three positions with a second between each move.
+
+
+How the code works
+
+  prepare_servo   — starts 50 Hz PWM on your SERVO_PIN
+  move_to         — sends the pulse for an angle 0–180°, then idles the line
+  pause           — wait in seconds (give the servo time to move)
+
+`run.py` stops PWM and cleans up GPIO when you finish or press Ctrl+C.
+
+
+Step 3: Test and improve it
+---------------------------
+
+Does it work?
+
+  • Servo moves to three different angles with visible pauses.
+  • Terminal shows Servo at …° and Cleanup complete.
+
+If it does not work
+
+  • Check SERVO_PIN matches the diagram (4, 5, 6, 17, or 27 only).
+  • Servo needs separate power from the kit — check the servo cable is seated.
+  • If it jitters, try longer pause(2) after each move_to.
+  • Run from ~/lessons: ./run 4
+
+Evaluation
+
+  • What happens if you skip pause() between moves?
+  • What angle would you use for “door closed” vs “door open”?
+  • How is a servo different from the LED strip in Lesson 3?
+
+
+Step 4: Go further
+------------------
+
+  • Wave: 0 → 90 → 0 → 90 → 0.
+  • Slow scan: move_to(0), pause(1), move_to(45), pause(1), … up to 180.
+  • Pick custom “left / middle / right” angles that fit your build.
+
+Reset your file
+
+  cd ~/lessons
+  ./reset.sh 4
+
+Reset all lessons
+
+  cd ~/lessons
+  ./reset.sh --all

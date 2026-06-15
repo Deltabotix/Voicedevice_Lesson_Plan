@@ -1,0 +1,59 @@
+Lesson 6 — Speaker
+==================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+Sound out is a **chain**: WAV file → **aplay** (software) → sound card → **amplifier** → **speaker**.
+If any link breaks, you hear nothing — so this lesson proves the chain works.
+
+What will you need to do?
+
+1. Set **AUDIO_DEVICE** (or leave `""` for default).
+2. Call **find_test_sound()** and **play_sound()** in `my_program()`.
+3. Run `./run 6`.
+
+Real-world use
+
+Every voice assistant, game, and alert tone depends on a working speaker path.
+
+
+Step 2: Create it
+-----------------
+
+Files: my_program.py (edit), helper.py, run.py
+
+Step A — settings
+
+  AUDIO_DEVICE = ""          # try "" first; then plughw:0,0 from aplay -l
+
+Step B — my_program()
+
+  path = find_test_sound()
+  play_sound(path, AUDIO_DEVICE)
+
+Step C — run
+
+  cd ~/lessons
+  ./run 6
+
+Optional: if play fails, call print_sound_help() from helper (see guide in code comments).
+
+
+Step 3: Test and improve it
+---------------------------
+
+Success: you hear a short test sound.
+
+Troubleshooting
+
+  • aplay -l — find card/device.
+  • alsamixer — unmute, raise volume.
+  • Add **test.wav** to this lesson folder.
+
+Reset
+
+  cd ~/lessons
+  ./reset.sh 6

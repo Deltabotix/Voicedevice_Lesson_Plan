@@ -1,0 +1,137 @@
+Lesson 2 — Buzzer
+=================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+In Lesson 1 you turned an LED on with a steady HIGH or LOW. The buzzer is different:
+this kit uses a **passive** buzzer — it will not beep properly if the pin just
+stays ON or OFF.
+
+Think of flicking a ruler on a desk — you hear a note because it **vibrates** back
+and forth really fast. The buzzer needs the same kind of wiggle; leaving the pin
+stuck ON is like holding the ruler still — no proper beep.
+
+The Pi uses **PWM** (pulse-width modulation): it flips the pin **ON and OFF**
+thousands of times per second — like flicking a light switch so fast you no longer
+see separate clicks. On the buzzer, that fast flipping makes the disk **shake** and
+you hear a steady tone.
+
+**Frequency** (in **Hz**, hertz) means “how many shakes per second.” More Hz →
+higher **pitch** (think whistle); fewer Hz → lower pitch (think drum). In your
+code, **beep length** is how long that shaking lasts, in **milliseconds** — short
+ms = short beep, long ms = long beep.
+
+What will you need to do?
+
+1. Set **BUZZER_PIN** and **BUZZER_FREQ_HZ** at the top of `my_program.py`.
+2. Fill in `my_program()` with: prepare → three beeps (short, short, long).
+3. Run `./run 2` and listen.
+
+Real-world use
+
+Alarm clocks, doorbells, robot “I’m stuck” warnings, and game sound effects often
+use the same idea: turn a tone on for a chosen time, then silence.
+
+
+Step 2: Create it
+-----------------
+
+What you need
+
+  • VoiceKit (Raspberry Pi Zero 2 W + board)
+  • USB power or battery pack
+  • Pin diagram (in the box or ~/lessons/PINOUT.txt when provided)
+  • This lesson folder: lesson_02_buzzer
+
+Files in this lesson
+
+  my_program.py   ← YOU edit this
+  helper.py       ← kit code (do not edit)
+  run.py          ← starts your program (do not edit)
+
+Step A — open your program
+
+  cd ~/lessons/lesson_02_buzzer
+  nano my_program.py
+
+Step B — fill in the two settings
+
+At the top of `my_program.py`:
+
+  BUZZER_PIN = 22           # passive buzzer on this kit (check pin diagram)
+  BUZZER_FREQ_HZ = 2500     # pitch — try 2000–4000 if quiet or harsh
+
+Step C — build my_program()
+
+Uncomment and use the steps in order:
+
+  prepare_buzzer(BUZZER_PIN)
+  beep(150, BUZZER_FREQ_HZ)
+  pause_ms(80)
+  beep(150, BUZZER_FREQ_HZ)
+  pause_ms(80)
+  beep(400, BUZZER_FREQ_HZ)
+
+Step D — run it
+
+From the lessons folder:
+
+  cd ~/lessons
+  ./run 2
+
+You should hear: **beep — beep — beeeeep**, then “Cleanup complete.” in the terminal.
+
+
+How the code works
+
+  prepare_buzzer   — tells the Pi which pin drives the buzzer (starts quiet)
+  beep             — plays a tone for N milliseconds at a frequency (Hz)
+  pause_ms         — short gap between beeps (milliseconds)
+
+`run.py` calls your `my_program()`, then always stops the buzzer and cleans up
+GPIO — even if you press Ctrl+C.
+
+
+Step 3: Test and improve it
+---------------------------
+
+Does it work?
+
+  • You hear two short beeps, then one longer beep.
+  • Terminal shows Beep (...) lines and Cleanup complete.
+
+If it does not work
+
+  • Check BUZZER_PIN matches the pin diagram (usually 22).
+  • Make sure you uncommented every line in my_program().
+  • If the tone is very quiet, try BUZZER_FREQ_HZ = 3000 or 3500.
+  • Run from ~/lessons: ./run 2
+
+Evaluation
+
+  • Did the pattern match what you expected?
+  • What happens if you change the last beep to 800 ms?
+  • How is a buzzer different from the LED in Lesson 1?
+
+
+Step 4: Go further
+------------------
+
+  • Morse “S”: three short beeps in a row.
+  • Two-tone alert: beep at 2000 Hz, then beep at 3500 Hz.
+  • Combine with Lesson 1: run the LED lesson, then this one (one program at a time).
+
+Reset your file
+
+  cd ~/lessons
+  git checkout -- lesson_02_buzzer/my_program.py
+
+Or: ./reset.sh 2
+
+Reset all lessons
+
+  cd ~/lessons
+  ./reset.sh --all

@@ -1,0 +1,122 @@
+Lesson 3 — 12 V LED strip
+=========================
+
+Step 1: Understand it
+---------------------
+
+How does it work?
+
+The **12 V LED strip** needs more power than the Pi can give. On this kit:
+
+  • The **12 V adapter** powers the strip.
+  • A **MOSFET** is an electronic switch — the Pi only tells it when to let current through.
+  • **PWM** on BCM pin **12** sets how much of each moment the strip is “on.” Our eyes
+    read that as **brighter** or **dimmer**.
+
+The Pi never feeds 12 V to the strip. It only controls the MOSFET.
+
+What will you need to do?
+
+1. Set **MAX_BRIGHTNESS** (a classroom-safe cap, e.g. 60%).
+2. Fill in `my_program()` — fade up, pause, fade down, **end at 0%** (strip off).
+3. Run `./run 3`.
+
+Real-world use
+
+Room lighting dimmers, LED signs, and under-cabinet lights often use the same idea:
+switch power quickly to control brightness.
+
+
+Step 2: Create it
+-----------------
+
+What you need
+
+  • VoiceKit + MOSFET + 12 V LED strip + **12 V adapter plugged in**
+  • Pin diagram (MOSFET control = BCM **12** on this kit)
+  • This folder: lesson_03_led_strip
+
+Files in this lesson
+
+  my_program.py   ← YOU edit this
+  helper.py       ← kit code (do not edit)
+  run.py          ← starts your program (do not edit)
+
+Step A — open your program
+
+  cd ~/lessons/lesson_03_led_strip
+  nano my_program.py
+
+Step B — set a brightness cap
+
+At the top of `my_program.py`:
+
+  MAX_BRIGHTNESS = 60     # classroom cap (ask teacher before going higher)
+
+Step C — build my_program()
+
+Uncomment and use the steps in order:
+
+  prepare_strip()
+  set_brightness(0)
+  fade_brightness(0, MAX_BRIGHTNESS, step=15, pause_ms=120)
+  pause(1)
+  fade_brightness(MAX_BRIGHTNESS, 0, step=15, pause_ms=120)
+  set_brightness(0)
+
+Step D — run it
+
+  cd ~/lessons
+  ./run 3
+
+You should see the strip fade up, hold briefly, fade down, then go fully off.
+
+
+How the code works
+
+  prepare_strip     — starts PWM on the MOSFET pin (strip off at first)
+  set_brightness    — jump to a level 0–100%
+  fade_brightness   — step from one level to another (simple fade)
+  pause             — wait in seconds between steps
+
+`run.py` always turns the strip off and cleans up GPIO when you finish or press Ctrl+C.
+
+
+Step 3: Test and improve it
+---------------------------
+
+Does it work?
+
+  • Strip fades up, then down, then is **fully off** (0%).
+  • Terminal shows brightness % lines and Cleanup complete.
+
+If it does not work
+
+  • Check the **12 V adapter** is plugged in and the strip wiring matches the diagram.
+  • MOSFET control pin is **12** on this kit (fixed in helper.py — do not change).
+  • Uncomment every line in my_program().
+  • Run from ~/lessons: ./run 3
+
+Evaluation
+
+  • What did MAX_BRIGHTNESS = 60 look like vs 30?
+  • Why must the program end with set_brightness(0)?
+  • Who might use PWM dimming in a real product?
+
+
+Step 4: Go further
+------------------
+
+  • Blink the strip: 0 → 40 → 0 → 40 (use set_brightness and pause).
+  • Two-step “stairs”: 0 → 30 → 60 → 0 with pause(1) between steps.
+  • Try a slower fade: pause_ms=250.
+
+Reset your file
+
+  cd ~/lessons
+  ./reset.sh 3
+
+Reset all lessons
+
+  cd ~/lessons
+  ./reset.sh --all
