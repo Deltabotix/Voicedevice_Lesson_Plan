@@ -17,5 +17,5 @@ GROQ_API_KEY=gsk_...
 ```bash
 cd ~/lessons
 ./run 8
-./reset.sh 8
+./reset 8
 ```

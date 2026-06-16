@@ -9,5 +9,5 @@ IR sensor = **input** (read). Red LED = **output** (write). Poll in a loop.
 ```bash
 cd ~/lessons
 ./run 5
-./reset.sh 5
+./reset 5
 ```

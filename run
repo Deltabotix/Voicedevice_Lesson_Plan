@@ -54,22 +54,28 @@ captive_is_active() {
 }
 
 systemctl_captive() {
-    if systemctl "$@" 2>/dev/null; then
-        return 0
-    fi
-    if sudo -n systemctl "$@" 2>/dev/null; then
-        return 0
-    fi
-    if [[ "$CAPTIVE_MODE" == "skip" ]]; then
-        return 1
-    fi
-    if [[ "$CAPTIVE_MODE" == "auto" ]]; then
-        return 1
-    fi
-    sudo systemctl "$@"
+    # Never call bare `systemctl stop/start` in auto mode — Polkit will prompt on
+    # the TTY even when stderr is redirected. Only passwordless sudo, or fail.
+    case "$CAPTIVE_MODE" in
+        auto|skip)
+            sudo -n systemctl "$@" 2>/dev/null
+            ;;
+        prompt)
+            if sudo -n systemctl "$@" 2>/dev/null; then
+                return 0
+            fi
+            sudo systemctl "$@"
+            ;;
+        *)
+            sudo -n systemctl "$@" 2>/dev/null
+            ;;
+    esac
 }
 
 stop_captive() {
+    if [[ "$CAPTIVE_MODE" == "skip" ]]; then
+        return
+    fi
     if ! captive_is_active; then
         log "$CAPTIVE_SERVICE was not running."
         return
@@ -86,6 +92,9 @@ stop_captive() {
 }
 
 start_captive() {
+    if [[ "$CAPTIVE_MODE" == "skip" ]]; then
+        return
+    fi
     if [[ "$CAPTIVE_WAS_RUNNING" != 1 ]]; then
         return
     fi

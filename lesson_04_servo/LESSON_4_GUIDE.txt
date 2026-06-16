@@ -113,9 +113,9 @@ Step 4: Go further
 Reset your file
 
   cd ~/lessons
-  ./reset.sh 4
+  ./reset 4
 
 Reset all lessons
 
   cd ~/lessons
-  ./reset.sh --all
+  ./reset --all

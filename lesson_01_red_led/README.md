@@ -16,5 +16,5 @@ cd ~/lessons
 cd ~/lessons
 git checkout -- lesson_01_red_led/my_program.py
 # or
-./reset.sh 1
+./reset 1
 ```

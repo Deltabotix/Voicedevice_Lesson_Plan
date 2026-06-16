@@ -63,4 +63,4 @@ Troubleshooting
 Reset
 
   cd ~/lessons
-  ./reset.sh 7
+  ./reset 7

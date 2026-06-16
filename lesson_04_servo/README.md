@@ -18,5 +18,5 @@ cd ~/lessons
 
 ```bash
 cd ~/lessons
-./reset.sh 4
+./reset 4
 ```

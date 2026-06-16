@@ -129,9 +129,9 @@ Reset your file
   cd ~/lessons
   git checkout -- lesson_02_buzzer/my_program.py
 
-Or: ./reset.sh 2
+Or: ./reset 2
 
 Reset all lessons
 
   cd ~/lessons
-  ./reset.sh --all
+  ./reset --all

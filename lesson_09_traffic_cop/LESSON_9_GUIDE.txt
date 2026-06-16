@@ -84,4 +84,4 @@ Go further
 Reset
 
   cd ~/lessons
-  ./reset.sh 9
+  ./reset 9

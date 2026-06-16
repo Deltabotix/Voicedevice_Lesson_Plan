@@ -37,8 +37,8 @@ See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full 
 | Script | Purpose |
 |--------|---------|
 | `./run N` or `./run.sh N` | Run lesson N (`run.sh` is the same as `run`) |
-| `./reset.sh N` | Restore `my_program.py` for lesson N from Git |
-| `./reset.sh --all` | Restore all tracked files |
+| `./reset N` | Restore `my_program.py` for lesson N from Git |
+| `./reset --all` | Restore all tracked files |
 | `./update.sh` | `git pull` latest lessons |
 
 ## New-style lessons (1–9)
@@ -81,7 +81,7 @@ Key is saved when you set up Wi‑Fi on the kit (`/home/voicedevice/.env`). If G
 ## Reset policy
 
 ```bash
-./reset.sh 1
+./reset 1
 ```
 
 ## Kit maintainers

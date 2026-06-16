@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Reset lesson files from Git (no local starter copies).
 #
-#   ./reset.sh 1
-#   ./reset.sh lesson_01_red_led
-#   ./reset.sh --all
+#   ./reset 1
+#   ./reset lesson_01_red_led
+#   ./reset --all
 
 set -euo pipefail
 

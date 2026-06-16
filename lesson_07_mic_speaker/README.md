@@ -9,7 +9,7 @@ Record a short clip, check loudness, play it back.
 ```bash
 cd ~/lessons
 ./run 7
-./reset.sh 7
+./reset 7
 ```
 
 Keep speaker volume low to avoid feedback.

@@ -13,5 +13,5 @@ Same as Lesson 8 — `GROQ_API_KEY` in `.env`.
 ```bash
 cd ~/lessons
 ./run 9
-./reset.sh 9
+./reset 9
 ```
