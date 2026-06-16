@@ -1,3 +1,0 @@
-# Lesson 6 — same client as voicekit_v2/llm_engine.py
-groq>=0.37.0
-python-dotenv>=1.0.0

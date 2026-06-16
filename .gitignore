@@ -10,7 +10,8 @@ __pycache__/
 .env
 *.env.local
 
-# Student / Teachable Machine exports (not shipped in repo)
+# TM recording output (zips with webm + samples.json)
+tm_recordings/
 **/model.tflite
 **/soundclassifier_with_metadata.tflite
 **/labels.txt

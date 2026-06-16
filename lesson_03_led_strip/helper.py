@@ -56,7 +56,7 @@ def fade_brightness(
         levels.append(b)
     for level in levels:
         set_brightness(level)
-        pause_ms(pause_ms)
+        time.sleep(pause_ms / 1000.0)
 
 
 def pause(seconds: int) -> None:

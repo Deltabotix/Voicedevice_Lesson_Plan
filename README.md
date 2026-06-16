@@ -48,18 +48,23 @@ See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full 
 | 8 | `lesson_08_led_prompt` | Groq → LED (prompt engineering) |
 | 9 | `lesson_09_traffic_cop` | Groq CONTROL vs GENERAL |
 
-Legacy folders (`lesson03_ir_sensor_led`, …) still use `challenge.py` until removed.
+## Teachable Machine
+
+Record on the Pi → one **zip per class** → upload in TM → export **tflite** back.
+
+See **[TM_AUDIO_WORKFLOW.txt](TM_AUDIO_WORKFLOW.txt)** and **`tm_pack_class.py`**.
+
+| Folder | Topic | Run |
+|--------|--------|-----|
+| `lesson08_barnyard_tm` | Barnyard soundboard | `./run lesson08_barnyard_tm` |
+| `lesson09_clubhouse_knock` | Secret knock | `./run lesson09_clubhouse_knock` |
+| `lesson10_voice_beat_sequencer` | Voice beat loop | `./run lesson10_voice_beat_sequencer` |
+
+Shared: **`tm_audio_runtime.py`**. On the Pi after training: **`model.tflite`** + **`labels.txt`** in each TM lesson folder.
 
 ## Groq (lessons 8–9)
 
-Uses **`groq`** and **`python-dotenv`** from the voicekit venv. Set your key in `.env`:
-
-1. Create a key at [console.groq.com](https://console.groq.com)
-2. Copy `.env.example` → `.env` (or use `/opt/voicedevice/.env` on the kit)
-
-## Teachable Machine (lessons 10+)
-
-Export **TensorFlow Lite** + **`labels.txt`** into the lesson folder (not in this repo).
+Key is saved when you set up Wi‑Fi on the kit (`/home/voicedevice/.env`). If Groq fails, ask your teacher or re-run kit setup.
 
 ## Docs
 

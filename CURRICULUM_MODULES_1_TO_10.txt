@@ -107,6 +107,10 @@ Modules 8–10: Teachable Machine on device (soundboard, password knock, voice b
 
 Lesson files on the kit stay fill-in-the-blank where possible: helpers provided, students supply the flow and key values. Pin maps and starters ship beside this file on the image.
 
-Lesson folder map (repo): lesson01_led_basics … lesson07_traffic_cop; lesson08_barnyard_tm; lesson09_clubhouse_knock; lesson10_voice_beat_sequencer. Shared TM helpers: lessons/tm_audio_runtime.py (used by lessons 8–10).
+Lesson folder map (repo):
+  lesson_01_red_led … lesson_09_traffic_cop  (my_program.py style)
+  lesson08_barnyard_tm, lesson09_clubhouse_knock, lesson10_voice_beat_sequencer  (Teachable Machine)
+  Shared: groq_env.py (lessons 8–9), tm_audio_runtime.py (TM lessons)
 
-On the Pi: shared Python env in lessons/venv/; run any challenge with  cd lessons && ./run lesson01_led_basics/challenge.py  (stops captiveportal.service, restarts it on Ctrl+C). See lessons/GETTING_STARTED_ON_THE_PI.txt for nano, ls, cd, and Ctrl+C.
+On the Pi: voicekit venv at /opt/voicedevice/voicekit_v2/venv; run with  cd ~/lessons && ./run N
+  or for TM: ./run lesson08_barnyard_tm  (see README.md).

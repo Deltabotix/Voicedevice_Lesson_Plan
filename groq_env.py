@@ -1,8 +1,7 @@
 """
-Load GROQ_API_KEY for lessons that call Groq (6–7).
+Load GROQ_API_KEY for lessons that call Groq (8–9).
 
-Students supply their own key — create one at https://console.groq.com and save it
-in a .env file (lesson folder or /home/voicedevice/.env):
+On the kit, the key is usually already in /home/voicedevice/.env from Wi‑Fi setup.
 
   GROQ_API_KEY=gsk_...
 """

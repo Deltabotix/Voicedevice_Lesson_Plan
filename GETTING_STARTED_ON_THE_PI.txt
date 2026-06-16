@@ -25,7 +25,7 @@ files ( groq_env.py ,  tm_audio_runtime.py ). Python packages are NOT in this
 folder — they live in  /opt/voicedevice/voicekit_v2/venv  (same as voicekit).
 
 Shared files (same folder as  lesson_1 , not inside each lesson):
-  groq_env.py           — lessons 6 and 7 (load your Groq API key from .env)
+  groq_env.py           — lessons 8 and 9 (Groq key from kit Wi‑Fi setup)
   tm_audio_runtime.py   — lessons 8, 9, and 10 (Teachable Machine audio)
   labels.txt            — lessons 8–10 (from your TM model export)
 
@@ -111,15 +111,15 @@ From your computer (not on the Pi), if you know the Pi IP address:
 Replace the IP and path with yours.
 
 
-Groq API key (lessons 6 and 7)
+Groq API key (lessons 8 and 9)
 ------------------------------
-Create a free key at https://console.groq.com
+Your key was saved when you set up Wi‑Fi on the kit (captive portal) into
+/home/voicedevice/.env — you do not need to create a separate file for lessons.
 
-Save it in a file named  .env  (in the lesson folder or in  ~/lessons ):
+If a lesson says the key is missing or Groq returns an auth error, finish Wi‑Fi
+setup again or ask your teacher.
 
-  GROQ_API_KEY=gsk_your_key_here
-
-Then run the lesson with  ./run 6  or  ./run 7
+Then run the lesson with  ./run 8  or  ./run 9
 
 
 Reset a lesson (Git)

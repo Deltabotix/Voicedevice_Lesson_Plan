@@ -1,0 +1,97 @@
+Teachable Machine — record on Pi, train on laptop
+=================================================
+
+What Teachable Machine expects (per class)
+------------------------------------------
+For each audio class (e.g.  background ,  cat ,  dog ), TM wants **one zip file**, not loose WAVs.
+
+Inside each zip:
+
+  recording.webm   — one long take (~20 seconds)
+  samples.json     — a list of ~20 segments; each segment has:
+                       startTime, endTime, recordingDuration
+                       frequencyFrames  (FFT data TM uses internally)
+
+When you record in the TM website, the browser builds this zip for you. On the kit
+we build the same shape on the Pi so training uses your **INMP441** microphone.
+
+
+Why one 20-second webm (not 20 separate files)?
+-----------------------------------------------
+TM treats the webm as one recording session and uses samples.json to mark
+where each ~1-second training example lives inside that session. That is why
+you see entries like:
+
+  startTime 0        → endTime 1.05
+  startTime 1.05     → endTime 2.10
+  … (about 20 slices in ~21 seconds)
+
+
+Record on the Pi
+----------------
+Prerequisites: Lesson 7 mic working;  arecord ,  ffmpeg ,  numpy  on the kit.
+
+  cd ~/lessons
+  python3 tm_pack_class.py background
+  python3 tm_pack_class.py cat
+  python3 tm_pack_class.py dog
+
+**While it records (~21 s):** make your class sound about **once per second**
+(20 times). For  background , stay quiet — room tone only.
+
+Output:
+
+  ~/lessons/tm_recordings/background.zip
+  ~/lessons/tm_recordings/cat.zip
+  …
+
+Optional mic device (if default is wrong):
+
+  python3 tm_pack_class.py cat --device plughw:0,0
+
+
+Copy zips to laptop
+-------------------
+From your **laptop**:
+
+  scp voicedevice@PI_IP:~/lessons/tm_recordings/*.zip ~/Downloads/
+
+Or USB stick.
+
+
+Upload in Teachable Machine
+---------------------------
+1. Open https://teachablemachine.withgoogle.com/ → **Audio Project**
+2. Add a class named exactly like the zip (e.g.  background ,  cat )
+3. For that class: **Upload** → choose  background.zip  (one zip per class)
+4. Repeat for every class
+5. **Train** → **Export** → **TensorFlow Lite**
+6. Download export zip → copy  model.tflite  (or  soundclassifier_with_metadata.tflite )
+   and  labels.txt  to the Pi lesson folder
+
+
+Copy model back to Pi
+---------------------
+From laptop:
+
+  scp model.tflite labels.txt voicedevice@PI_IP:~/lessons/lesson08_barnyard_tm/
+
+Run:
+
+  cd ~/lessons
+  ./run lesson08_barnyard_tm
+
+
+If TM rejects the zip
+---------------------
+- Re-record: sounds must be spaced ~1 per second during the 20 s take.
+- Check  ffmpeg  and  numpy  are installed in the voicekit venv.
+- As fallback: record that class in TM’s browser on the laptop, then continue
+  with other classes from the Pi.
+
+
+After training (on Pi)
+----------------------
+TM lessons still need  model.tflite  +  labels.txt  + your  sounds/*.wav  for
+playback. The webm zips are only for **training** on the laptop, not for running
+the lesson.
