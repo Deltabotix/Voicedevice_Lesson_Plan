@@ -1,0 +1,7 @@
+# Install on the kit image (once) so ./run does not ask for a password:
+#   sudo cp voicedevice-captiveportal.sudoers /etc/sudoers.d/voicedevice-captiveportal
+#   sudo chmod 440 /etc/sudoers.d/voicedevice-captiveportal
+#   sudo visudo -c
+#
+# Allows user voicedevice to stop/start the Wi-Fi captive portal around lessons.
+voicedevice ALL=(ALL) NOPASSWD: /bin/systemctl start captiveportal.service, /bin/systemctl stop captiveportal.service, /bin/systemctl is-active captiveportal.service

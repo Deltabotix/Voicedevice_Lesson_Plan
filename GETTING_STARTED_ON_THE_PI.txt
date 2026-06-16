@@ -131,12 +131,38 @@ Reset a lesson (Git)
 Or:  git checkout -- lesson_01_red_led/my_program.py
 
 
+If ./run asks for a password twice
+----------------------------------
+The kit pauses  captiveportal.service  while a lesson runs, then starts it again.
+That is **two** systemctl actions (stop + start).
+
+Production images should install passwordless sudo for that service only:
+
+  sudo cp ~/lessons/voicedevice-captiveportal.sudoers /etc/sudoers.d/
+  sudo chmod 440 /etc/sudoers.d/voicedevice-captiveportal.sudoers
+  sudo visudo -c
+
+After that,  ./run  should not ask for a password.
+
+If you see "Choose identity 1 or 2", Polkit found two login accounts for the
+same user — pick 1 (tempadmin) or ask your teacher. Installing the sudoers file
+above avoids these prompts.
+
+To skip captive portal control entirely (testing):
+
+  LESSONS_CAPTIVE=skip ./run 1
+
+To allow interactive sudo (old behaviour):
+
+  LESSONS_CAPTIVE=prompt ./run 1
+
+
 If ./run says permission denied
 -------------------------------
   chmod +x ~/lessons/run ~/lessons/run.sh
 
-If systemctl needs a password, ask your facilitator — the kit image may
-use passwordless  sudo  for  systemctl  only.
+If systemctl needs a password every time, install voicedevice-captiveportal.sudoers
+on the image (see section above).
 
 
 Quick reference

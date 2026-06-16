@@ -25,11 +25,18 @@ cd ~/lessons
 
 See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full details.
 
+**Two different `run.sh` files on the kit**
+
+| Path | Purpose |
+|------|---------|
+| `~/lessons/run` or `~/lessons/run.sh` | **Lessons** — `./run 1`, `./run 8`, … |
+| `~/run.sh` | **Voice assistant** — started by captive portal (not lessons) |
+
 ## Commands
 
 | Script | Purpose |
 |--------|---------|
-| `./run N` or `./run.sh N` | Run lesson N (voicekit venv, pauses Wi‑Fi captive portal) |
+| `./run N` or `./run.sh N` | Run lesson N (`run.sh` is the same as `run`) |
 | `./reset.sh N` | Restore `my_program.py` for lesson N from Git |
 | `./reset.sh --all` | Restore all tracked files |
 | `./update.sh` | `git pull` latest lessons |

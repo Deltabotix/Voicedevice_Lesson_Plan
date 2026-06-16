@@ -118,6 +118,8 @@ def _normalize_tag(raw: str) -> str:
 
 
 def cleanup() -> None:
+    if _led_pin is None:
+        return
     try:
         light_off()
     except Exception:

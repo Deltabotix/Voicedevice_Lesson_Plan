@@ -59,14 +59,14 @@ One lesson:
 cd ~/lessons
 git checkout -- lesson_01_red_led/my_program.py
 # or
-./reset_lesson.sh 1
+./reset.sh 1
 ```
 
 All lessons:
 
 ```bash
 cd ~/lessons
-./reset_lesson.sh --all
+./reset.sh --all
 # or: git checkout -- .
 ```
 

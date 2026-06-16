@@ -83,6 +83,8 @@ def _stop_strip_pwm() -> None:
 
 
 def cleanup() -> None:
+    if _strip_pwm is None:
+        return
     _stop_strip_pwm()
     try:
         GPIO.cleanup()

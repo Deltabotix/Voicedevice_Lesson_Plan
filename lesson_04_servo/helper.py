@@ -52,6 +52,8 @@ def _stop_servo_pwm() -> None:
 
 
 def cleanup() -> None:
+    if _servo_pin is None:
+        return
     _stop_servo_pwm()
     try:
         GPIO.cleanup()

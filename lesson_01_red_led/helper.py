@@ -52,10 +52,11 @@ def pause(seconds: int) -> None:
 
 
 def cleanup() -> None:
+    if _led_pin is None:
+        return
     try:
-        if _led_pin is not None and _on_level is not None:
-            off_level = GPIO.LOW if _on_level == GPIO.HIGH else GPIO.HIGH
-            GPIO.output(_led_pin, off_level)
+        off_level = GPIO.LOW if _on_level == GPIO.HIGH else GPIO.HIGH
+        GPIO.output(_led_pin, off_level)
     except Exception:
         pass
     try:

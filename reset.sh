@@ -1,3 +1,76 @@
 #!/usr/bin/env bash
-# Same as ./reset_lesson.sh — use either name from the lessons folder.
-exec "$(cd "$(dirname "$0")" && pwd)/reset_lesson.sh" "$@"
+# Reset lesson files from Git (no local starter copies).
+#
+#   ./reset.sh 1
+#   ./reset.sh lesson_01_red_led
+#   ./reset.sh --all
+
+set -euo pipefail
+
+LESSONS_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$LESSONS_DIR"
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "Error: ~/lessons is not a git clone. Clone the lessons repo first." >&2
+    exit 1
+fi
+
+find_lesson_dir() {
+    local n="$1"
+    if [[ -d "$LESSONS_DIR/lesson_${n}" ]]; then
+        echo "lesson_${n}"
+        return 0
+    fi
+    local padded hit
+    padded="$(printf '%02d' "$n")"
+    hit="$(find "$LESSONS_DIR" -maxdepth 1 -type d -name "lesson_${padded}_*" 2>/dev/null | sort | head -n 1)"
+    if [[ -n "$hit" ]]; then
+        basename "$hit"
+        return 0
+    fi
+    hit="$(find "$LESSONS_DIR" -maxdepth 1 -type d -name "lesson${padded}_*" 2>/dev/null | sort | head -n 1)"
+    if [[ -n "$hit" ]]; then
+        basename "$hit"
+        return 0
+    fi
+    return 1
+}
+
+reset_one() {
+    local dir="$1"
+    local target="$dir/my_program.py"
+    if [[ ! -f "$target" ]]; then
+        echo "Error: no my_program.py in $dir" >&2
+        exit 1
+    fi
+    git checkout HEAD -- "$target"
+    echo "Reset $target from Git (HEAD)."
+}
+
+if [[ "${1:-}" == "--all" ]]; then
+    git checkout HEAD -- .
+    echo "Reset all tracked lesson files from Git (HEAD)."
+    exit 0
+fi
+
+[[ $# -eq 1 ]] || {
+    echo "Usage: $0 <lesson-number|folder>" >&2
+    echo "       $0 --all" >&2
+    exit 1
+}
+
+raw="$1"
+if [[ "$raw" =~ ^[0-9]+$ ]]; then
+    dir="$(find_lesson_dir "$raw")" || {
+        echo "Error: no lesson folder for number $raw" >&2
+        exit 1
+    }
+else
+    dir="${raw#./}"
+    [[ -d "$LESSONS_DIR/$dir" ]] || {
+        echo "Error: folder not found: $LESSONS_DIR/$dir" >&2
+        exit 1
+    }
+fi
+
+reset_one "$dir"

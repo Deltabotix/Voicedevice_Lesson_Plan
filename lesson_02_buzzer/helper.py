@@ -53,9 +53,10 @@ def _stop_pwm() -> None:
 
 def cleanup() -> None:
     _stop_pwm()
+    if _buzzer_pin is None:
+        return
     try:
-        if _buzzer_pin is not None:
-            GPIO.output(_buzzer_pin, GPIO.LOW)
+        GPIO.output(_buzzer_pin, GPIO.LOW)
     except Exception:
         pass
     try:

@@ -41,35 +41,59 @@ EOF
 
 log() { echo "[run] $*"; }
 
-systemctl_sudo() {
-    # Kit images often allow passwordless sudo for systemctl; try without sudo first.
+# auto = try passwordless systemctl only; skip = never touch captive portal;
+# prompt = allow interactive sudo/polkit (may ask twice: stop + start).
+CAPTIVE_MODE="${LESSONS_CAPTIVE:-auto}"
+
+systemctl_quiet() {
+    systemctl "$@" 2>/dev/null || sudo -n systemctl "$@" 2>/dev/null
+}
+
+captive_is_active() {
+    systemctl_quiet is-active --quiet "$CAPTIVE_SERVICE"
+}
+
+systemctl_captive() {
     if systemctl "$@" 2>/dev/null; then
         return 0
+    fi
+    if sudo -n systemctl "$@" 2>/dev/null; then
+        return 0
+    fi
+    if [[ "$CAPTIVE_MODE" == "skip" ]]; then
+        return 1
+    fi
+    if [[ "$CAPTIVE_MODE" == "auto" ]]; then
+        return 1
     fi
     sudo systemctl "$@"
 }
 
-captive_is_active() {
-    systemctl is-active --quiet "$CAPTIVE_SERVICE" 2>/dev/null && return 0
-    sudo systemctl is-active --quiet "$CAPTIVE_SERVICE" 2>/dev/null && return 0
-    return 1
-}
-
 stop_captive() {
-    if captive_is_active; then
-        log "Stopping $CAPTIVE_SERVICE …"
-        systemctl_sudo stop "$CAPTIVE_SERVICE"
+    if ! captive_is_active; then
+        log "$CAPTIVE_SERVICE was not running."
+        return
+    fi
+    log "Stopping $CAPTIVE_SERVICE …"
+    if systemctl_captive stop "$CAPTIVE_SERVICE"; then
         CAPTIVE_WAS_RUNNING=1
     else
-        log "$CAPTIVE_SERVICE was not running."
+        log "Warning: could not stop $CAPTIVE_SERVICE (no passwordless sudo?)."
+        log "  Lesson will still run. For GPIO/mic lessons, ask your teacher to"
+        log "  install lessons/voicedevice-captiveportal.sudoers on the kit image."
+        CAPTIVE_WAS_RUNNING=0
     fi
 }
 
 start_captive() {
-    if [[ "$CAPTIVE_WAS_RUNNING" == 1 ]]; then
-        log "Starting $CAPTIVE_SERVICE …"
-        systemctl_sudo start "$CAPTIVE_SERVICE" || log "Warning: could not start $CAPTIVE_SERVICE"
+    if [[ "$CAPTIVE_WAS_RUNNING" != 1 ]]; then
+        return
     fi
+    log "Starting $CAPTIVE_SERVICE …"
+    if systemctl_captive start "$CAPTIVE_SERVICE"; then
+        return
+    fi
+    log "Warning: could not start $CAPTIVE_SERVICE. Run: sudo systemctl start $CAPTIVE_SERVICE"
 }
 
 on_exit() {

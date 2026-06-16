@@ -88,6 +88,8 @@ def pause_ms(milliseconds: int) -> None:
 
 
 def cleanup() -> None:
+    if _led_pin is None and _ir_pin is None:
+        return
     try:
         light_off()
     except Exception:

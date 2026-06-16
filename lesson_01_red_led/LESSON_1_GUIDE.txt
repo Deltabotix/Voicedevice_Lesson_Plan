@@ -121,9 +121,9 @@ Reset your file
   cd ~/lessons
   git checkout -- lesson_01_red_led/my_program.py
 
-Or: ./reset_lesson.sh 1
+Or: ./reset.sh 1
 
 Reset all lessons
 
   cd ~/lessons
-  ./reset_lesson.sh --all
+  ./reset.sh --all
