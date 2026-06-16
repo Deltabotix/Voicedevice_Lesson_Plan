@@ -114,3 +114,4 @@ Lesson folder map (repo):
 
 On the Pi: voicekit venv at /opt/voicedevice/voicekit_v2/venv; run with  cd ~/lessons && ./run N
   or for TM: ./run lesson08_barnyard_tm  (see README.md).
+  Full student workflow: GETTING_STARTED_ON_THE_PI.txt  (clone, nano, run, reset, update).

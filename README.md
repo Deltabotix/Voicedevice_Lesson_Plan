@@ -15,15 +15,16 @@ cd ~/lessons
 ./run 1
 ```
 
-Get new lesson **code** from GitHub (the venv stays on the Pi — it is not in this repo):
+Get new lesson **code** from GitHub (the venv stays on the Pi — it is not in this repo).
+`./update.sh` updates kit files from GitHub but **keeps your `my_program.py` edits**:
 
 ```bash
 cd ~/lessons
 ./update.sh
-# or: git pull
+# or: git pull   # only if you have no local conflicts
 ```
 
-See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full details.
+See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** — full guide: git clone, nano, `./run`, `./reset`, `./update.sh`.
 
 **Two different `run.sh` files on the kit**
 
@@ -39,7 +40,7 @@ See **[GETTING_STARTED_ON_THE_PI.txt](GETTING_STARTED_ON_THE_PI.txt)** for full 
 | `./run N` or `./run.sh N` | Run lesson N (`run.sh` is the same as `run`) |
 | `./reset N` | Restore `my_program.py` for lesson N from Git |
 | `./reset --all` | Restore all tracked files |
-| `./update.sh` | `git pull` latest lessons |
+| `./update.sh` | Sync lessons from GitHub (keeps your `my_program.py` edits) |
 
 ## New-style lessons (1–9)
 

@@ -1,174 +1,250 @@
-Getting started on the Raspberry Pi — lessons folder
-======================================================
+Running lessons on the Raspberry Pi — full guide
+=================================================
 
-This kit keeps lesson code in the  lessons  folder. Use the commands below
-in a terminal (black window on the Pi desktop, or SSH).
+This guide covers everything from first setup to editing code, running lessons,
+resetting your work, and getting updates from GitHub.
+
+Use a terminal on the Pi (desktop Terminal app, or SSH from a laptop).
 
 
-Where am I?
------------
-After login, open a terminal and go to the lessons folder:
+────────────────────────────────────────────────────────────────────────────────
+PART 1 — First-time setup (git clone)
+────────────────────────────────────────────────────────────────────────────────
 
-  cd ~/lessons
+Most kits already have  ~/lessons  on the SD card. If yours does not, clone
+the repo once:
 
-If that fails, try:
-
-  cd ~/Voicedevice/lessons
-  cd /opt/voicedevice/lessons
+  cd ~
+  git clone https://github.com/Deltabotix/Voicedevice_Lesson_Plan.git lessons
+  cd lessons
+  chmod +x run reset update.sh
 
 Check you are in the right place:
 
+  cd ~/lessons
   ls
 
-You should see folders like  lesson_01_red_led ,  run ,  reset , and shared
-files ( groq_env.py ,  tm_audio_runtime.py ). Python packages are NOT in this
-folder — they live in  /opt/voicedevice/voicekit_v2/venv  (same as voicekit).
+You should see:
 
-Shared files (same folder as  lesson_1 , not inside each lesson):
-  groq_env.py           — lessons 8 and 9 (Groq key from kit Wi‑Fi setup)
-  tm_audio_runtime.py   — lessons 8, 9, and 10 (Teachable Machine audio)
-  labels.txt            — lessons 8–10 (from your TM model export)
+  lesson_01_red_led/     lesson_02_buzzer/     … (more lesson folders)
+  run                    reset                 update.sh
+  groq_env.py            tm_audio_runtime.py   README.md
 
-If lesson 6 says  No module named groq_env , copy  groq_env.py  into  ~/lessons .
+Python packages are NOT installed here. The kit uses:
+
+  /opt/voicedevice/voicekit_v2/venv
+
+You do not run  pip install  or create your own venv.
 
 
-Running a lesson (recommended)
-------------------------------
-Lessons use the kit Python at  /opt/voicedevice/voicekit_v2/venv  — the same
-environment as voicekit_v2. You do not create venv or run pip install.
+────────────────────────────────────────────────────────────────────────────────
+PART 2 — How a lesson is laid out
+────────────────────────────────────────────────────────────────────────────────
 
-Use the  run  script — it stops the Wi-Fi captive portal while you work,
-then turns the portal back on when you finish.
+Each lesson folder looks like this (example: lesson 1):
+
+  lesson_01_red_led/
+    my_program.py    ← YOU edit this (your code)
+    helper.py        ← kit code (do not edit)
+    run.py           ← kit runner (do not edit)
+    LESSON_1_GUIDE.txt
+    README.md
+
+Rules:
+
+  • Only edit  my_program.py  unless your teacher says otherwise.
+  • Never edit  helper.py  or  run.py .
+  • Read the  LESSON_N_GUIDE.txt  in each folder for that lesson’s steps.
+
+
+────────────────────────────────────────────────────────────────────────────────
+PART 3 — Edit your code with nano
+────────────────────────────────────────────────────────────────────────────────
+
+Open the file you will change (lesson 1 example):
+
+  cd ~/lessons/lesson_01_red_led
+  nano my_program.py
+
+Nano basics:
+
+  Arrow keys     move the cursor
+  Ctrl+O         save (then press Enter to confirm the filename)
+  Ctrl+X         exit nano
+  Ctrl+K         cut a line
+  Ctrl+U         paste
+
+Save and exit:
+
+  Ctrl+O   → Enter   →   Ctrl+X
+
+Exit without saving:
+
+  Ctrl+X   →   N   (when asked “Save modified buffer?”)
+
+After editing, go back to the lessons folder before you run:
+
+  cd ~/lessons
+
+
+────────────────────────────────────────────────────────────────────────────────
+PART 4 — Run a lesson
+────────────────────────────────────────────────────────────────────────────────
+
+Always run from  ~/lessons  using the  run  script:
 
   cd ~/lessons
   ./run 1
-  ./run.sh 1                 # same as ./run
 
-Shortcuts:
+Lesson number shortcuts:
 
-  ./run 6                  → lesson 6
-  ./run lesson_06_led_prompt
-  ./run lesson_10/challenge.py
+  ./run 1          lesson 1 (red LED)
+  ./run 2          lesson 2 (buzzer)
+  …
+  ./run 9          lesson 9 (traffic cop / Groq)
 
-When the lesson is running, press  Ctrl+C  to stop. The captive portal
-service starts again automatically.
+Teachable Machine lessons (different folder names):
+
+  ./run lesson08_barnyard_tm
+  ./run lesson09_clubhouse_knock
+  ./run lesson10_voice_beat_sequencer
+
+What  ./run  does for you:
+
+  1. Uses the kit Python venv (no setup needed).
+  2. Pauses the Wi-Fi captive portal (so GPIO / mic / speaker are free).
+  3. Runs your lesson’s  run.py .
+  4. When finished (or Ctrl+C), starts the captive portal again.
+
+You may be asked for your Pi password once or twice (stop portal, start portal).
+That is normal. Enter your password. If you see “Choose identity 1 or 2”, pick 1.
+
+Stop a lesson early:
+
+  Ctrl+C
+
+If you used  ./run , the captive portal restarts automatically.
 
 
-Getting new lessons (Git)
--------------------------
-Lesson code updates from GitHub. The voicekit venv is unchanged.
+────────────────────────────────────────────────────────────────────────────────
+PART 5 — Full workflow (lesson 1 example)
+────────────────────────────────────────────────────────────────────────────────
+
+  # 1. Go to lessons
+  cd ~/lessons
+
+  # 2. Open your program
+  nano lesson_01_red_led/my_program.py
+
+  # 3. Edit the file (follow LESSON_1_GUIDE.txt), save with Ctrl+O, exit Ctrl+X
+
+  # 4. Run
+  ./run 1
+
+  # 5. Watch the LED / read the terminal output
+
+  # 6. Change something in my_program.py and run again
+  nano lesson_01_red_led/my_program.py
+  ./run 1
+
+
+────────────────────────────────────────────────────────────────────────────────
+PART 6 — Reset your work (start over)
+────────────────────────────────────────────────────────────────────────────────
+
+If your code is broken or you want the original starter file back:
+
+  cd ~/lessons
+  ./reset 1
+
+That restores only  lesson_01_red_led/my_program.py  from Git.
+
+Reset another lesson:
+
+  ./reset 5
+
+Reset every tracked lesson file (careful — loses all your  my_program.py  edits):
+
+  ./reset --all
+
+Reset does NOT delete your Teachable Machine models ( model.tflite ,  labels.txt
+are ignored by Git and stay on the Pi).
+
+
+────────────────────────────────────────────────────────────────────────────────
+PART 7 — Get new lessons from GitHub (update)
+────────────────────────────────────────────────────────────────────────────────
+
+When your teacher publishes fixes or new lessons:
 
   cd ~/lessons
   ./update.sh
-  # or: git pull
 
+This downloads the latest kit files ( run ,  reset , helpers, guides) from
+GitHub. It keeps your  my_program.py  edits.
 
-Why ./run stops the captive portal
-----------------------------------
-The kit runs  captiveportal.service  so you can connect Wi-Fi and enter
-your Groq key. While a lesson uses the microphone, speaker, or GPIO, the
-portal is paused so nothing fights for those resources.  ./run  handles
-that for you.
+If update fails with “local changes would be overwritten”, run once:
 
-
-Editing code with nano
-----------------------
-  nano lesson_1/challenge.py
-
-Use the arrow keys to move. Edit the lines marked  TODO  or  student_flow .
-
-Save and exit:
-  Ctrl+O   then Enter   (write file)
-  Ctrl+X                (exit nano)
-
-Cancel without saving:
-  Ctrl+X   then  N  when asked to save
-
-
-Listing and moving between folders
-----------------------------------
-  ls              list files in this folder
-  ls lesson*      list all lesson folders
-  cd lesson_1
-  cd ..           go up one folder
-  pwd             print current folder path
-
-
-Stopping a running program
---------------------------
-  Ctrl+C          stop the program in the foreground (lessons, tests)
-  Ctrl+Z          suspend (advanced — avoid unless you know job control)
-
-If you used  ./run , Ctrl+C also restarts the captive portal.
-
-
-Copying a file from your laptop (optional)
------------------------------------------
-From your computer (not on the Pi), if you know the Pi IP address:
-
-  scp myfile.wav voicedevice@192.168.x.x:~/lessons/lesson08_barnyard_tm/
-
-Replace the IP and path with yours.
-
-
-Groq API key (lessons 8 and 9)
-------------------------------
-Your key was saved when you set up Wi‑Fi on the kit (captive portal) into
-/home/voicedevice/.env — you do not need to create a separate file for lessons.
-
-If a lesson says the key is missing or Groq returns an auth error, finish Wi‑Fi
-setup again or ask your teacher.
-
-Then run the lesson with  ./run 8  or  ./run 9
-
-
-Reset a lesson (Git)
---------------------
   cd ~/lessons
-  ./reset 1                 # one lesson (my_program.py)
-  ./reset --all               # all tracked files
-
-Or:  git checkout -- lesson_01_red_led/my_program.py
-
-
-If ./run asks for a password twice
-----------------------------------
-The kit pauses  captiveportal.service  while a lesson runs, then starts it again.
-That is **two** systemctl actions (stop + start).
-
-Production images should install passwordless sudo for that service only:
-
-  sudo cp ~/lessons/voicedevice-captiveportal.sudoers /etc/sudoers.d/
-  sudo chmod 440 /etc/sudoers.d/voicedevice-captiveportal.sudoers
-  sudo visudo -c
-
-After that,  ./run  should not ask for a password.
-
-If you see "Choose identity 1 or 2", Polkit found two login accounts for the
-same user — pick 1 (tempadmin) or ask your teacher. Installing the sudoers file
-above avoids these prompts.
-
-To skip captive portal control entirely (testing):
-
-  LESSONS_CAPTIVE=skip ./run 1
-
-To allow interactive sudo (old behaviour):
-
-  LESSONS_CAPTIVE=prompt ./run 1
+  git fetch origin
+  git reset --hard origin/main
+  chmod +x run reset update.sh
+  ./update.sh
 
 
-If ./run says permission denied
--------------------------------
+────────────────────────────────────────────────────────────────────────────────
+PART 8 — Quick reference
+────────────────────────────────────────────────────────────────────────────────
+
+  cd ~/lessons                          go to lessons folder
+  ls                                    list files
+  ls lesson*                            list lesson folders
+  nano lesson_01_red_led/my_program.py  edit lesson 1
+  ./run 1                               run lesson 1
+  ./reset 1                             undo your lesson 1 code
+  ./update.sh                           get latest from GitHub
+  Ctrl+C                                stop a running lesson
+
+Scripts summary:
+
+  ./run N        run lesson N (handles Python + captive portal)
+  ./reset N      restore  my_program.py  for lesson N
+  ./reset --all  restore all tracked files from Git
+  ./update.sh    sync kit files from GitHub (keeps your programs)
+
+
+────────────────────────────────────────────────────────────────────────────────
+PART 9 — Troubleshooting
+────────────────────────────────────────────────────────────────────────────────
+
+./run: permission denied
   chmod +x ~/lessons/run ~/lessons/reset
 
-If systemctl needs a password every time, install voicedevice-captiveportal.sudoers
-on the image (see section above).
+./run: Warning about captive portal / password
+  Enter your Pi password when asked. Lesson still runs if you skip — but mic/GPIO
+  lessons work best when the portal is paused.
 
+Lesson 8 or 9: Groq API key missing
+  Complete Wi-Fi setup on the kit (captive portal). The key is saved to
+  ~/.env  automatically. Ask your teacher if Groq still fails.
 
-Quick reference
----------------
+No module named groq_env
+  cd ~/lessons && ./update.sh
+
+Teachable Machine lesson: model not found
+  Copy  model.tflite  and  labels.txt  into that lesson folder (from your laptop).
+  See TM_AUDIO_WORKFLOW.txt .
+
+Wrong folder?
   cd ~/lessons
-  ls
-  nano lessonNN_.../challenge.py
-  ./run lessonNN_.../challenge.py
-  Ctrl+C   stop lesson + restart captive portal
+  pwd    should show  /home/voicedevice/lessons
+
+
+────────────────────────────────────────────────────────────────────────────────
+Note: ~/run.sh vs ~/lessons/run
+────────────────────────────────────────────────────────────────────────────────
+
+  ~/lessons/run       runs LESSONS  (./run 1, ./run 8, …)
+  ~/run.sh            starts the VOICE ASSISTANT (captive portal) — not for lessons
+
+Do not confuse them.
